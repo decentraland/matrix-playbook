@@ -1,13 +1,12 @@
 image: docker:latest
-job:
-  tags:
-    - fargate
 
 services:
   - docker:dind
 
 deploy-infra:
   stage: deploy
+  tags:
+    - fargate
   image: decentraland/ci-node:latest
   script:
     - dcl-lock-sync
