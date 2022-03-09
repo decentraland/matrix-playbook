@@ -29,9 +29,15 @@ export = async function main() {
       },
       {
         cidrBlocks: ["0.0.0.0/0"],
-        fromPort: 10000,
+        fromPort: 80,
         toPort: 65535,
-        protocol: "-1",
+        protocol: "tcp",
+      },
+      {
+        cidrBlocks: ["0.0.0.0/0"],
+        fromPort: 80,
+        toPort: 65535,
+        protocol: "udp",
       },
     ],
   });
