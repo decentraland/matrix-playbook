@@ -1,15 +1,17 @@
 {
-  "env": {
-    "es2021": true,
-    "node": true
+  "compilerOptions": {
+    "strict": true,
+    "outDir": "bin",
+    "target": "es2016",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "pretty": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "forceConsistentCasingInFileNames": true
   },
-  "extends": "@dcl/eslint-config",
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "project": ["tsconfig.json"],
-    "ecmaVersion": 13,
-    "sourceType": "module"
-  },
-  "plugins": ["@typescript-eslint"],
-  "rules": {}
+  "include": ["*.ts", "**/*.ts"]
 }
