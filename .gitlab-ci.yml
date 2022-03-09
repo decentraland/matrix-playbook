@@ -1,0 +1,12 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+deploy-infra:
+  stage: deploy
+  image: decentraland/ci-node:latest
+  script:
+    - dcl-lock-sync
+    - npm install && DOCKER_BUILDKIT=1 dcl-up synapse-test
+    - dcl-sync-release
