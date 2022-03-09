@@ -1,4 +1,7 @@
 image: docker:latest
+job:
+  tags:
+    - fargate
 
 services:
   - docker:dind
