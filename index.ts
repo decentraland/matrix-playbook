@@ -62,4 +62,6 @@ export = async function main() {
     }
   );
 
+  return ec2
+
 }
