@@ -48,7 +48,6 @@ export = async function main() {
       ami,
       instanceType: "t2.micro" as pulumi.Input<aws.ec2.InstanceType>,
       associatePublicIpAddress: true,
-      keyName: "synapse-test-key",
 
       // gracefully stop the machine to not corrupt any data
       instanceInitiatedShutdownBehavior: "stop",
