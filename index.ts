@@ -46,7 +46,7 @@ export = async function main() {
     "synapse-testing-instance",
     {
       ami,
-      instanceType: "t2.micro" as pulumi.Input<aws.ec2.InstanceType>,
+      instanceType: "t2.medium" as pulumi.Input<aws.ec2.InstanceType>,
       associatePublicIpAddress: true,
       keyName: "bastion",
 
