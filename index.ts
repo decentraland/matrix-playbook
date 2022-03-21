@@ -70,13 +70,5 @@ export = async function main() {
     recordName: "test-synapse", // .decentraland.org
   })
 
-  setRecord({
-    type: "CNAME",
-    proxied: false,
-    ttl: 1000,
-    value: `matrix.${ec2.publicDns}`,
-    recordName: "test-synapse-matrix", // .decentraland.org
-  })
-
   return ec2
 }
