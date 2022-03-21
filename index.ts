@@ -4,6 +4,7 @@ import * as pulumi from "@pulumi/pulumi"
 
 import { getAmi } from "dcl-ops-lib/getAmi"
 import { getPublicBastionIp } from "dcl-ops-lib/supra"
+import { setRecord } from "dcl-ops-lib/cloudflare"
 
 export = async function main() {
   const ami = getAmi("ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-20200112", { owners: ["099720109477"] })
@@ -60,6 +61,22 @@ export = async function main() {
       dependsOn: [],
     }
   )
+
+  setRecord({
+    type: "A",
+    proxied: false,
+    ttl: 1000,
+    value: ec2.publicIp,
+    recordName: "test-synapse", // .decentraland.org
+  })
+
+  setRecord({
+    type: "CNAME",
+    proxied: false,
+    ttl: 1000,
+    value: `matrix.${ec2.publicDns}`,
+    recordName: "test-synapse-matrix", // .decentraland.org
+  })
 
   return ec2
 }
