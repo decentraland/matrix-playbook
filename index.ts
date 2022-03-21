@@ -70,11 +70,13 @@ export = async function main() {
     recordName: "test-synapse", // .decentraland.org
   })
 
+  const cname = `matrix.${ec2.publicIp}`
+
   setRecord({
     type: "CNAME",
     proxied: false,
     ttl: 1000,
-    value: `matrix.${ec2.publicIp}`,
+    value: cname,
     recordName: "matrix-test-synapse", // .decentraland.org
   })
 
