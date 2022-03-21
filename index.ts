@@ -74,7 +74,7 @@ export = async function main() {
     type: "CNAME",
     proxied: false,
     ttl: 1000,
-    value: `matrix.${ec2.publicDns}`,
+    value: `matrix.${ec2.publicIp}`,
     recordName: "matrix-test-synapse", // .decentraland.org
   })
 
