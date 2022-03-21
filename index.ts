@@ -70,9 +70,7 @@ export = async function main() {
     recordName: "test-synapse", // .decentraland.org
   })
 
-  const cname = `matrix.${ec2.publicIp}`
-
-  console.log("cname", cname)
+  const cname = ec2.publicIp.apply((value) => `matrix.${value}`)
 
   setRecord({
     type: "CNAME",
