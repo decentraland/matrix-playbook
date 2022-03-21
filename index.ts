@@ -70,5 +70,13 @@ export = async function main() {
     recordName: "test-synapse", // .decentraland.org
   })
 
+  setRecord({
+    type: "CNAME",
+    proxied: false,
+    ttl: 1000,
+    value: `matrix.${ec2.publicDns.get()}`,
+    recordName: "matrix-", // .decentraland.org
+  })
+
   return ec2
 }
