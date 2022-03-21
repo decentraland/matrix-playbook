@@ -72,6 +72,8 @@ export = async function main() {
 
   const cname = `matrix.${ec2.publicIp}`
 
+  console.log("cname", cname)
+
   setRecord({
     type: "CNAME",
     proxied: false,
