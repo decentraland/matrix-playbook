@@ -92,5 +92,8 @@ export = async function main() {
     recordName: "matrix-test-synapse", // .decentraland.org
   })
 
+  console.log("elasticIp", elasticIp)
+  console.log("elasticIpAssoc", elasticIpAssoc)
+
   return ec2
 }
