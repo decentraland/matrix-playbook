@@ -9,7 +9,7 @@
 # because you can't change the Domain after deployment.
 #
 # Example value: example.com
-matrix_domain: 142.93.199.220
+matrix_domain: matrix.ec2-54-174-205-27.compute-1.amazonaws.com/
 
 # The Matrix homeserver software to install.
 # See `roles/matrix-base/defaults/main.yml` for valid options.

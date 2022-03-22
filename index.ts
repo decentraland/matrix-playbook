@@ -10,6 +10,8 @@ export = async function main() {
   const ami = getAmi("ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-20200112", { owners: ["099720109477"] })
 
   const vpc = awsx.ec2.Vpc.getDefault()
+  const stackName = pulumi.getStack()
+
   const securityGroup = new aws.ec2.SecurityGroup("synapse-test-security", {
     vpcId: vpc.id,
     egress: [
@@ -49,6 +51,7 @@ export = async function main() {
       ami,
       instanceType: "t2.medium" as pulumi.Input<aws.ec2.InstanceType>,
       associatePublicIpAddress: true,
+
       keyName: "bastion",
 
       // gracefully stop the machine to not corrupt any data
@@ -62,15 +65,24 @@ export = async function main() {
     }
   )
 
+  const elasticIp = new aws.ec2.Eip(`${stackName}-ip`, {
+    vpc: true,
+  })
+
+  const elasticIpAssoc = new aws.ec2.EipAssociation(`${stackName}-ip-assoc`, {
+    allocationId: elasticIp.id,
+    instanceId: ec2.id,
+  })
+
   setRecord({
     type: "A",
     proxied: false,
     ttl: 1000,
-    value: ec2.publicIp,
+    value: elasticIpAssoc.publicIp,
     recordName: "test-synapse", // .decentraland.org
   })
 
-  const cname = ec2.publicIp.apply((value) => `matrix.${value}`)
+  const cname = elasticIpAssoc.publicIp.apply((value) => `matrix.${value}`)
 
   setRecord({
     type: "CNAME",

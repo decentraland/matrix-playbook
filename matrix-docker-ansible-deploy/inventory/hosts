@@ -16,4 +16,4 @@
 # to the host line below.
 
 [matrix_servers]
-matrix.142.93.199.220 ansible_host=142.93.199.220 ansible_ssh_user=root
+matrix.142.93.199.220 ansible_host=142.93.199.220 ansible_ssh_user=ubuntu become=true become_user=root
