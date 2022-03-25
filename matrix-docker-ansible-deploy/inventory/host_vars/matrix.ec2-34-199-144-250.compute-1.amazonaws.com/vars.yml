@@ -9,7 +9,7 @@
 # because you can't change the Domain after deployment.
 #
 # Example value: example.com
-matrix_domain: matrix.ec2-54-174-205-27.compute-1.amazonaws.com/
+matrix_domain: ec2-34-199-144-250.compute-1.amazonaws.com
 
 # The Matrix homeserver software to install.
 # See `roles/matrix-base/defaults/main.yml` for valid options.
@@ -34,7 +34,6 @@ matrix_ssl_lets_encrypt_support_email: 'someone@example.com'
 # The playbook creates additional Postgres users and databases (one for each enabled service)
 # using this superuser account.
 matrix_postgres_connection_password: 'M0zart'
-
 
 matrix_ssl_retrieval_method: self-signed
 
