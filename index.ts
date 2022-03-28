@@ -95,13 +95,13 @@ export = async function main() {
   elasticIp.publicIp.apply((ip) => console.log("elasticIp.publicIp", ip))
   elasticIpAssoc.publicIp.apply((ip) => console.log("elasticIpAssoc.publicIp", ip))
 
-  const pageRuleTarget = elasticIp.publicDns.apply((publicDns) => `synapse-test.${publicDns}/*`)
+  // const pageRuleTarget = elasticIp.publicDns.apply((publicDns) => `synapse-test.${publicDns}/*`)
 
-  console.log("pageRuleTarget", pageRuleTarget)
+  // console.log("pageRuleTarget", pageRuleTarget)
 
   const pageRule = new cloudflare.PageRule("synapse-testing-instance", {
     zoneId: await getZoneId(),
-    target: pageRuleTarget,
+    target: elasticIp.publicDns,
     priority: 1,
     actions: {
       ssl: "flexible",
