@@ -76,36 +76,44 @@ export = async function main() {
     instanceId: ec2.id,
   })
 
-  setRecord({
+  const matrix = await setRecord({
     type: "A",
     proxied: true,
     value: elasticIpAssoc.publicIp,
     recordName: "test-synapse", // .decentraland.org
   })
 
-  const cname = elasticIpAssoc.publicIp.apply((value) => `matrix.${value}`)
-
-  setRecord({
-    type: "CNAME",
-    proxied: true,
-    value: cname,
-    recordName: "matrix-test-synapse", // .decentraland.org
+  const ssh = await setRecord({
+    type: "A",
+    proxied: false,
+    ttl: 1000,
+    value: elasticIpAssoc.publicIp,
+    recordName: "test-synapse-ssh", // .decentraland.org
   })
 
-  elasticIp.publicIp.apply((ip) => console.log("elasticIp.publicIp", ip))
-  elasticIpAssoc.publicIp.apply((ip) => console.log("elasticIpAssoc.publicIp", ip))
+  // const cname = elasticIpAssoc.publicIp.apply((value) => `matrix.${value}`)
 
-  const pageRuleTarget = elasticIp.publicDns.apply((publicDns) => `synapse-test.${publicDns}/*`)
-
-  console.log("pageRuleTarget", pageRuleTarget)
+  // setRecord({
+  //   type: "CNAME",
+  //   proxied: true,
+  //   value: cname,
+  //   recordName: "matrix-test-synapse", // .decentraland.org
+  // })
 
   const pageRule = new cloudflare.PageRule(`${stackName}-page-rule`, {
     zoneId: await getZoneId(),
-    target: `test-synapse.${publicTLD}/*`,
+    target: pulumi.interpolate`${matrix.hostname}/*`,
     actions: {
       ssl: "flexible"
     },
   })
 
-  return ec2
+  return {
+    publicIp: elasticIp.publicIp,
+    privateIp: elasticIp.privateIp,
+    hostname: matrix.hostname,
+    pageRule,
+    sshHostname: ssh.hostname
+  }
+
 }
