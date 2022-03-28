@@ -78,7 +78,8 @@ export = async function main() {
 
   setRecord({
     type: "A",
-    proxied: true,
+    proxied: false,
+    ttl: 1000,
     value: elasticIpAssoc.publicIp,
     recordName: "test-synapse", // .decentraland.org
   })
@@ -87,8 +88,7 @@ export = async function main() {
 
   setRecord({
     type: "CNAME",
-    proxied: false,
-    ttl: 1000,
+    proxied: true,
     value: cname,
     recordName: "matrix-test-synapse", // .decentraland.org
   })
