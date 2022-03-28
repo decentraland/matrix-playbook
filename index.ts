@@ -3,6 +3,7 @@ import * as awsx from "@pulumi/awsx"
 import * as pulumi from "@pulumi/pulumi"
 import * as cloudflare from "@pulumi/cloudflare"
 
+import { publicTLD } from "dcl-ops-lib/domain"
 import { getAmi } from "dcl-ops-lib/getAmi"
 import { getPublicBastionIp } from "dcl-ops-lib/supra"
 import { setRecord, getZoneId } from "dcl-ops-lib/cloudflare"
@@ -100,8 +101,8 @@ export = async function main() {
   console.log("pageRuleTarget", pageRuleTarget)
 
   const pageRule = new cloudflare.PageRule("synapse-testing-instance-page-rule", {
-    zoneId: await getZoneId(),
-    target: pageRuleTarget,
+    zoneId: getZoneId(),
+    target: `test-synapse.${publicTLD}/*`,
     priority: 1,
     actions: {
       ssl: "flexible",
