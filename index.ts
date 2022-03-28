@@ -78,8 +78,7 @@ export = async function main() {
 
   setRecord({
     type: "A",
-    proxied: false,
-    ttl: 1000,
+    proxied: true,
     value: elasticIpAssoc.publicIp,
     recordName: "test-synapse", // .decentraland.org
   })
@@ -100,13 +99,11 @@ export = async function main() {
 
   console.log("pageRuleTarget", pageRuleTarget)
 
-  const pageRule = await new cloudflare.PageRule("synapse-testing-ssl-page-rule", {
-    zoneId: getZoneId(),
+  const pageRule = new cloudflare.PageRule(`${stackName}-page-rule`, {
+    zoneId: await getZoneId(),
     target: `test-synapse.${publicTLD}/*`,
-    priority: 1,
     actions: {
-      ssl: "flexible",
-      hostHeaderOverride: `matrix.${decentralandTld}`,
+      ssl: "flexible"
     },
   })
 
