@@ -100,7 +100,7 @@ export = async function main() {
   console.log("pageRuleTarget", pageRuleTarget)
 
   const pageRule = new cloudflare.PageRule("synapse-testing-instance", {
-    zoneId: getZoneId(),
+    zoneId: await getZoneId(),
     target: pageRuleTarget,
     priority: 1,
     actions: {
