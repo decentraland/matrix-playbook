@@ -95,8 +95,7 @@ export = async function main() {
     zoneId: await getZoneId(),
     target: pulumi.interpolate`${matrix.hostname}/*`,
     actions: {
-      ssl: "flexible",
-      alwaysUseHttps: true
+      ssl: "flexible"
     },
   })
 
