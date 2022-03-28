@@ -91,20 +91,12 @@ export = async function main() {
     recordName: "test-synapse-ssh", // .decentraland.org
   })
 
-  // const cname = elasticIpAssoc.publicIp.apply((value) => `matrix.${value}`)
-
-  // setRecord({
-  //   type: "CNAME",
-  //   proxied: true,
-  //   value: cname,
-  //   recordName: "matrix-test-synapse", // .decentraland.org
-  // })
-
   const pageRule = new cloudflare.PageRule(`${stackName}-page-rule`, {
     zoneId: await getZoneId(),
     target: pulumi.interpolate`${matrix.hostname}/*`,
     actions: {
-      ssl: "flexible"
+      ssl: "flexible",
+      alwaysUseHttps: true
     },
   })
 
