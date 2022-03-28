@@ -35,7 +35,7 @@ matrix_ssl_lets_encrypt_support_email: 'someone@example.com'
 # using this superuser account.
 matrix_postgres_connection_password: 'M0zart'
 
-matrix_ssl_retrieval_method: self-signed
+matrix_ssl_retrieval_method: none
 
 matrix_synapse_container_client_api_host_bind_port: '127.0.0.1:8008'
 
