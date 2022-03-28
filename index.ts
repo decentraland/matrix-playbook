@@ -1,10 +1,11 @@
 import * as aws from "@pulumi/aws"
 import * as awsx from "@pulumi/awsx"
 import * as pulumi from "@pulumi/pulumi"
+import * as cloudflare from "@pulumi/cloudflare"
 
 import { getAmi } from "dcl-ops-lib/getAmi"
 import { getPublicBastionIp } from "dcl-ops-lib/supra"
-import { setRecord } from "dcl-ops-lib/cloudflare"
+import { setRecord, getZoneId } from "dcl-ops-lib/cloudflare"
 
 export = async function main() {
   const ami = getAmi("ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-20200112", { owners: ["099720109477"] })
@@ -76,8 +77,7 @@ export = async function main() {
 
   setRecord({
     type: "A",
-    proxied: false,
-    ttl: 1000,
+    proxied: true,
     value: elasticIpAssoc.publicIp,
     recordName: "test-synapse", // .decentraland.org
   })
@@ -94,6 +94,17 @@ export = async function main() {
 
   elasticIp.publicIp.apply((ip) => console.log("elasticIp.publicIp", ip))
   elasticIpAssoc.publicIp.apply((ip) => console.log("elasticIpAssoc.publicIp", ip))
+
+  const pageRuleTarget = elasticIp.publicDns.apply((publicDns) => `synapse-test.${publicDns}/*`)
+
+  const pageRule = new cloudflare.PageRule("synapse-testing-instance", {
+    zoneId: getZoneId(),
+    target: pageRuleTarget,
+    priority: 1,
+    actions: {
+      ssl: "flexible",
+    },
+  })
 
   return ec2
 }
