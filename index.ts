@@ -3,7 +3,7 @@ import * as awsx from "@pulumi/awsx"
 import * as pulumi from "@pulumi/pulumi"
 import * as cloudflare from "@pulumi/cloudflare"
 
-import { publicTLD } from "dcl-ops-lib/domain"
+import { publicTLD, domain as decentralandTld } from "dcl-ops-lib/domain"
 import { getAmi } from "dcl-ops-lib/getAmi"
 import { getPublicBastionIp } from "dcl-ops-lib/supra"
 import { setRecord, getZoneId } from "dcl-ops-lib/cloudflare"
@@ -100,12 +100,13 @@ export = async function main() {
 
   console.log("pageRuleTarget", pageRuleTarget)
 
-  const pageRule = new cloudflare.PageRule("synapse-testing-instance-page-rule", {
+  const pageRule = await new cloudflare.PageRule("synapse-testing-ssl-page-rule", {
     zoneId: getZoneId(),
     target: `test-synapse.${publicTLD}/*`,
     priority: 1,
     actions: {
       ssl: "flexible",
+      hostHeaderOverride: `matrix.${decentralandTld}`,
     },
   })
 
