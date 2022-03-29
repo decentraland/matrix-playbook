@@ -16,4 +16,4 @@
 # to the host line below.
 
 [matrix_servers]
-matrix.ec2-34-199-144-250.compute-1.amazonaws.com ansible_host=172.31.95.253 ansible_ssh_user=ubuntu become=true become_user=root
+matrix.test-synapse.decentraland.zone ansible_host=172.31.95.253 ansible_ssh_user=ubuntu become=true become_user=root

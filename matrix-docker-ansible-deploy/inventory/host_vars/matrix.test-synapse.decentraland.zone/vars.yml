@@ -40,3 +40,9 @@ matrix_ssl_retrieval_method: none
 matrix_synapse_container_client_api_host_bind_port: '127.0.0.1:8008'
 
 matrix_synapse_workers_enabled: true
+
+matrix_nginx_proxy_https_enabled: false
+
+matrix_registration_enabled: true
+
+matrix_registration_admin_secret: "ENTER_SOME_SECRET_HERE"
