@@ -46,3 +46,5 @@ matrix_nginx_proxy_https_enabled: false
 matrix_registration_enabled: true
 
 matrix_registration_admin_secret: "M0zart"
+
+matrix_client_element_enabled: false
