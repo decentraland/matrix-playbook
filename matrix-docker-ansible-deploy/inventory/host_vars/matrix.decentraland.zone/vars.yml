@@ -9,7 +9,7 @@
 # because you can't change the Domain after deployment.
 #
 # Example value: example.com
-matrix_domain: test-synapse.decentraland.zone
+matrix_domain: decentraland.zone
 
 # The Matrix homeserver software to install.
 # See `roles/matrix-base/defaults/main.yml` for valid options.

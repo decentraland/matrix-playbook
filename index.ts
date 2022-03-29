@@ -3,7 +3,6 @@ import * as awsx from "@pulumi/awsx"
 import * as pulumi from "@pulumi/pulumi"
 import * as cloudflare from "@pulumi/cloudflare"
 
-import { publicTLD, domain as decentralandTld } from "dcl-ops-lib/domain"
 import { getAmi } from "dcl-ops-lib/getAmi"
 import { getPublicBastionIp } from "dcl-ops-lib/supra"
 import { setRecord, getZoneId } from "dcl-ops-lib/cloudflare"
@@ -80,7 +79,14 @@ export = async function main() {
     type: "A",
     proxied: true,
     value: elasticIpAssoc.publicIp,
-    recordName: "test-synapse", // .decentraland.org
+    recordName: "matrix", // .decentraland.org
+  })
+
+  await setRecord({
+    type: "CNAME",
+    proxied: true,
+    value: matrix.hostname, // matrix.hostname is the FQDN or the record including decentraland.zone, ej matrix.decentraland.zone
+    recordName: "element.matrix", // `element.matrix.decentraland.org` apuntando a matrix.hostname
   })
 
   const ssh = await setRecord({
@@ -88,14 +94,14 @@ export = async function main() {
     proxied: false,
     ttl: 1000,
     value: elasticIpAssoc.publicIp,
-    recordName: "test-synapse-ssh", // .decentraland.org
+    recordName: "matrix-ssh", // .decentraland.org
   })
 
   const pageRule = new cloudflare.PageRule(`${stackName}-page-rule`, {
     zoneId: await getZoneId(),
     target: pulumi.interpolate`${matrix.hostname}/*`,
     actions: {
-      ssl: "flexible"
+      ssl: "flexible",
     },
   })
 
@@ -104,7 +110,6 @@ export = async function main() {
     privateIp: elasticIp.privateIp,
     hostname: matrix.hostname,
     pageRule,
-    sshHostname: ssh.hostname
+    sshHostname: ssh.hostname,
   }
-
 }
