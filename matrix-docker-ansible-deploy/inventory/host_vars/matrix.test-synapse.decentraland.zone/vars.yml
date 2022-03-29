@@ -9,7 +9,7 @@
 # because you can't change the Domain after deployment.
 #
 # Example value: example.com
-matrix_domain: ec2-34-199-144-250.compute-1.amazonaws.com
+matrix_domain: test-synapse.decentraland.zone
 
 # The Matrix homeserver software to install.
 # See `roles/matrix-base/defaults/main.yml` for valid options.
@@ -45,4 +45,4 @@ matrix_nginx_proxy_https_enabled: false
 
 matrix_registration_enabled: true
 
-matrix_registration_admin_secret: "ENTER_SOME_SECRET_HERE"
+matrix_registration_admin_secret: "M0zart"
