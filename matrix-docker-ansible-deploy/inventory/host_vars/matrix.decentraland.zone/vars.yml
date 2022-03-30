@@ -48,3 +48,16 @@ matrix_registration_enabled: true
 matrix_registration_admin_secret: "M0zart"
 
 matrix_client_element_enabled: false
+
+matrix_synapse_configuration_extension_yaml: |
+  password_providers:
+    - module: data.decentraland_password_auth_provider.DecentralandPasswordAuthProvider
+      config:
+        enabled: true
+        trusted_servers:
+          - https://peer.decentraland.org/lambdas
+          - https://peer-ec1.decentraland.org/lambdas
+          - https://peer-wc1.decentraland.org/lambdas
+          - https://peer-eu1.decentraland.org/lambdas
+          - https://peer-ap1.decentraland.org/lambdas
+          - https://interconnected.online/lambdas
