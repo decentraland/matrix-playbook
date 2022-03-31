@@ -17,7 +17,7 @@ matrix_homeserver_implementation: synapse
 
 # A secret used as a base, for generating various other secrets.
 # You can put any string here, but generating a strong one is preferred (e.g. `pwgen -s 64 1`).
-matrix_homeserver_generic_secret_key: 'M0zart'
+matrix_homeserver_generic_secret_key: ''
 
 # This is something which is provided to Let's Encrypt when retrieving SSL certificates for domains.
 #
@@ -33,7 +33,7 @@ matrix_ssl_lets_encrypt_support_email: 'someone@example.com'
 #
 # The playbook creates additional Postgres users and databases (one for each enabled service)
 # using this superuser account.
-matrix_postgres_connection_password: 'M0zart'
+matrix_postgres_connection_password: ''
 
 matrix_ssl_retrieval_method: none
 
@@ -45,7 +45,7 @@ matrix_nginx_proxy_https_enabled: false
 
 matrix_registration_enabled: true
 
-matrix_registration_admin_secret: "M0zart"
+matrix_registration_admin_secret: ""
 
 matrix_client_element_enabled: false
 
