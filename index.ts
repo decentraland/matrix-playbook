@@ -18,7 +18,7 @@ export = async function main() {
   set +x
 
   echo "Cloning synapse repository..."
-  git clone https://dcl.tools/ops/synapse-test-server.git`
+  git clone https://github.com/decentraland/catalyst-owner.git`
 
   const securityGroup = new aws.ec2.SecurityGroup("synapse-test-security", {
     vpcId: vpc.id,
