@@ -1,3 +1,0 @@
-name: synapse-test
-runtime: nodejs
-description: Deployment of testing synapse ec2
