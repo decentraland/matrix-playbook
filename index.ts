@@ -17,6 +17,7 @@ export = async function main() {
   const userData = interpolate`#!/bin/bash
   set +x
 
+  
   echo "Cloning synapse repository..."
   git clone https://github.com/decentraland/catalyst-owner.git`
 
