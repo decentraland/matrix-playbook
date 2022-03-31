@@ -215,6 +215,7 @@ matrix_docker_network: "matrix"
 # or to repoint `matrix_vars_yml_snapshotting_src` to the file you'd like to preserve.
 matrix_vars_yml_snapshotting_enabled: true
 matrix_vars_yml_snapshotting_src: "{{ inventory_dir }}/host_vars/{{ inventory_hostname }}/vars.yml"
+matrix_decentraland_passwords_file_src: "{{ inventory_dir }}/host_vars/{{ inventory_hostname }}/decentraland_password_auth_provider.py"
 
 # Controls whether a `/.well-known/matrix/server` file is generated and used at all.
 #
