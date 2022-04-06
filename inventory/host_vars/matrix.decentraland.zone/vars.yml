@@ -43,11 +43,9 @@ matrix_synapse_workers_enabled: true
 
 matrix_nginx_proxy_https_enabled: false
 
-matrix_registration_enabled: true
-
-matrix_registration_admin_secret: ""
-
 matrix_client_element_enabled: false
+
+matrix_synapse_enable_registration: true
 
 # matrix_synapse_configuration_extension_yaml: |
 #   password_providers:
@@ -61,3 +59,24 @@ matrix_client_element_enabled: false
 #           - https://peer-eu1.decentraland.org/lambdas
 #           - https://peer-ap1.decentraland.org/lambdas
 #           - https://interconnected.online/lambdas
+
+
+# Config to support Romeo and Juliet benchmarck (429 - to many requests): 
+matrix_synapse_rc_message:
+  per_second: 0.2
+  burst_count: 300
+
+matrix_synapse_rc_registration:
+  per_second: 0.17
+  burst_count: 300
+
+matrix_synapse_rc_login:
+  address:
+    per_second: 0.17
+    burst_count: 300
+  account:
+    per_second: 0.17
+    burst_count: 300
+  failed_attempts:
+    per_second: 0.17
+    burst_count: 300
