@@ -1,5 +1,4 @@
 ---
-
 # Pre-checks
 
 - name: Fail if Postgres not enabled
@@ -21,7 +20,6 @@
   fail:
     msg: "File cannot be found on the server at {{ server_path_postgres_dump }}"
   when: "not result_server_path_postgres_dump_stat.stat.exists"
-
 
 # Defaults
 
@@ -83,6 +81,8 @@
       {{ 'gunzip |' if server_path_postgres_dump.endswith('.gz') else '' }}
       grep -vE '{{ matrix_postgres_import_roles_ignore_regex }}' |
       grep -vE '{{ matrix_postgres_import_databases_ignore_regex }}' |
+      grep -v 'GRANT ALL ON SCHEMA public' |
+      grep -v 'REVOKE ALL ON SCHEMA public' |
       psql -v ON_ERROR_STOP=1 -h matrix-postgres --dbname={{ postgres_default_import_database }}"
 
 # This is a hack.
@@ -95,10 +95,10 @@
     dummy: true
   with_items:
     - >-
-        Importing Postgres database using the following command: `{{ matrix_postgres_import_command }}`.
-        If this crashes, you can stop Postgres (`systemctl stop matrix-postgres`),
-        delete its existing data (`rm -rf {{ matrix_postgres_data_path }}/*`), start it again (`systemctl start matrix-postgres`)
-        and manually run the above import command directly on the server.
+      Importing Postgres database using the following command: `{{ matrix_postgres_import_command }}`.
+      If this crashes, you can stop Postgres (`systemctl stop matrix-postgres`),
+      delete its existing data (`rm -rf {{ matrix_postgres_data_path }}/*`), start it again (`systemctl start matrix-postgres`)
+      and manually run the above import command directly on the server.
 
 - name: Perform Postgres database import
   command: "{{ matrix_postgres_import_command }}"
