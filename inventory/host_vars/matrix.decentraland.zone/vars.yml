@@ -87,3 +87,13 @@ matrix_synamse_rc_joins:
 matrix_synapse_rc_message:
   per_second: 0.5
   burst_count: 300
+
+
+# Metrics/Stats
+matrix_prometheus_enabled: true
+
+matrix_prometheus_node_exporter_enabled: true
+
+matrix_grafana_enabled: true
+
+matrix_grafana_anonymous_access: true
