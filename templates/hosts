@@ -16,4 +16,4 @@
 # to the host line below.
 
 [matrix_servers]
-matrix.decentraland.zone ansible_host=172.31.91.154 ansible_ssh_user=ubuntu become=true become_user=root
+matrix.MATRIX_DOMAIN ansible_host=PRIVATE_IP ansible_ssh_user=SSH_USER become=true become_user=root
