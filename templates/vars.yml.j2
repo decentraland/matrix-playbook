@@ -48,7 +48,7 @@ matrix_nginx_proxy_https_enabled: false
 matrix_client_element_enabled: false
 
 matrix_synapse_enable_registration: true
-{% if ENV not in ['prod'] %}
+{% if ENV not in ['prd'] %}
 # Config to support Romeo and Juliet benchmark and testing tools (429 - too many requests):
 matrix_synapse_rc_registration:
   per_second: 5
