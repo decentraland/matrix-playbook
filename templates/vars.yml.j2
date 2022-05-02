@@ -9,9 +9,9 @@
 # because you can't change the Domain after deployment.
 #
 # Example value: example.com
-matrix_domain: {{ MATRIX_DOMAIN }}
+matrix_domain: '{{ MATRIX_DOMAIN }}'
 
-matrix_server_fqn_matrix: "{{ SUBDOMAIN|default('synapse', true) }}.{{ MATRIX_DOMAIN }}"
+matrix_server_fqn_matrix: '{{ SUBDOMAIN|default('synapse', true) }}.{{ MATRIX_DOMAIN }}'
 
 # The Matrix homeserver software to install.
 # See `roles/matrix-base/defaults/main.yml` for valid options.
@@ -48,7 +48,6 @@ matrix_nginx_proxy_https_enabled: false
 matrix_client_element_enabled: false
 
 matrix_synapse_enable_registration: true
-
 {% if ENV not in ['prod'] %}
 # Config to support Romeo and Juliet benchmark and testing tools (429 - too many requests):
 matrix_synapse_rc_registration:
@@ -78,7 +77,6 @@ matrix_synapse_rc_message:
   per_second: 5
   burst_count: 1000
 {% endif %}
-
 # Metrics/Stats
 matrix_prometheus_enabled: true
 matrix_prometheus_node_exporter_enabled: true
@@ -89,18 +87,20 @@ matrix_nginx_proxy_proxy_synapse_metrics_basic_auth_enabled: false
 matrix_grafana_enabled: true
 matrix_grafana_anonymous_access: true
 
-{% set use_external_db = USE_EXTERNAL_DB|default('false') in ['true']%}
+{%- set use_external_db = USE_EXTERNAL_DB|default('false') in ['true'] -%}
 {% if use_external_db %}
+
 # External DB
 matrix_postgres_enabled: false
-# Rewire Synapse to use your external Postgres server
-matrix_synapse_database_host: {{POSTGRES_HOSTNAME}}
-matrix_synapse_database_user: {{POSTGRES_USER}}
-matrix_synapse_database_password: {{POSTGRES_PASSWORD}}
-matrix_synapse_database_database: {{POSTGRES_DB}}
 
+# Rewire Synapse to use external Postgres server
+matrix_synapse_database_host: '{{POSTGRES_HOST}}'
+matrix_synapse_database_user: '{{POSTGRES_USER}}'
+matrix_synapse_database_password: '{{POSTGRES_PASSWORD}}'
+matrix_synapse_database_database: '{{POSTGRES_DATABASE}}'
 {% endif %}
-{% set use_decentraland_password_provider = USE_DECENTRALAND_PASSWORD_PROVIDER|default('false') in ['true']%}
+
+{%- set use_decentraland_password_provider = USE_DECENTRALAND_PASSWORD_PROVIDER|default('false') in ['true'] -%}
 {% if use_decentraland_password_provider %}
 # Decentraland password auth provider module
 matrix_synapse_configuration_extension_yaml: |

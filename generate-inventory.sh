@@ -1,33 +1,44 @@
 #!/bin/bash
+set -euo pipefail
+set -e
+# set -u
 
 # Check env file exists
 echo "Checking .env file..."
-test -e .env || (echo '.env file does not exist' && exit)
+[ -f .env ] || (echo '.env file does not exist' && exit 1)
 
 # Read and export env vars from .env
 echo "Loading env vars from .env file..."
-source .env
+export $(cat .env | xargs)
 
-pip3 install j2cli
+# Check posgres env vars are present
+if [ $USE_EXTERNAL_DB = true ]; then
+  [ ! -v "${POSTGRES_USER}" ] || [ ! -z "${POSTGRES_USER}" ] || (echo 'POSTGRES_USER is not defined or empty and is required to setup external DB' && exit 1)
+  [ ! -v "${POSTGRES_PASSWORD}" ] || [ ! -z "${POSTGRES_PASSWORD}" ] || (echo 'POSTGRES_PASSWORD is not defined or empty and is required to setup external DB' && exit 1)
+  [ ! -v "${POSTGRES_HOST}" ] || [ ! -z "${POSTGRES_HOST}" ] || (echo 'POSTGRES_HOST is not defined or empty and is required to setup external DB' && exit 1)
+  [ ! -v "${POSTGRES_DATABASE}" ] || [ ! -z "${POSTGRES_DATABASE}" ] || (echo 'POSTGRES_DATABASE is not defined or empty and is required to setup external DB' && exit 1)
+fi
 
-# # Check if docker compose is installed
-# if ! [ -x "$(command -v j2)" ]; then
-#   echo -n "Error: j2 is not installed..." >&2
-#   exit 1
-# fi
+# Check if jinja 2 is installed
+if ! [ -x "$(command -v j2)" ]; then
+  echo -n "Error: j2 is not installed..." >&2
+  exit 1
+fi
 
 # Create inventory hosts file
 echo "Creating inventory hosts file..."
-j2 --format=env templates/hosts.j2 .env > inventory/hosts
+j2 --format=env templates/hosts.j2 .env >inventory/hosts
 
 # Create inventory host vars.yml
 OUTPUT_FOLDER=inventory/host_vars/$SUBDOMAIN.$MATRIX_DOMAIN/
 mkdir -p $OUTPUT_FOLDER
 echo "Generated vars.yaml moved to: $OUTPUT_FOLDER"
-j2 --format=env templates/vars.yml.j2 .env > $OUTPUT_FOLDER/vars.yml
+j2 --format=env templates/vars.yml.j2 .env >$OUTPUT_FOLDER/vars.yml
 
 # Copy auth provider plugin
-echo "Password auth provider moved to: $OUTPUT_FOLDER"
-cp templates/decentraland_password_auth_provider.py $OUTPUT_FOLDER
+if [ $USE_DECENTRALAND_PASSWORD_PROVIDER = true ]; then
+  echo "Password auth provider moved to: $OUTPUT_FOLDER"
+  cp templates/decentraland_password_auth_provider.py $OUTPUT_FOLDER
+fi
 
 echo "Done!"
