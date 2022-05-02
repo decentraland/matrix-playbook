@@ -47,7 +47,10 @@ matrix_nginx_proxy_https_enabled: false
 
 matrix_client_element_enabled: false
 
+{%- set enable_open_registration = ENABLE_OPEN_REGISTRATION|default('false') in ['true'] -%}
+{% if enable_open_registration %}
 matrix_synapse_enable_registration: true
+{% endif %}
 {% if ENV not in ['prd'] %}
 # Config to support Romeo and Juliet benchmark and testing tools (429 - too many requests):
 matrix_synapse_rc_registration:
