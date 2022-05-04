@@ -102,8 +102,9 @@ matrix_synapse_database_user: '{{POSTGRES_USER}}'
 matrix_synapse_database_password: '{{POSTGRES_PASSWORD}}'
 matrix_synapse_database_database: '{{POSTGRES_DATABASE}}'
 {% endif %}
-
-{%- set use_decentraland_password_provider = USE_DECENTRALAND_PASSWORD_PROVIDER|default('false') in ['true'] -%}
+{% set use_decentraland_password_provider = USE_DECENTRALAND_PASSWORD_PROVIDER|default('false') in ['true'] %}
+# Decentraland Password Provider
+use_decentraland_password_provider: {{ use_decentraland_password_provider }}
 {% if use_decentraland_password_provider %}
 # Decentraland password auth provider module
 matrix_synapse_configuration_extension_yaml: |
@@ -118,4 +119,5 @@ matrix_synapse_configuration_extension_yaml: |
           - https://peer-eu1.decentraland.org/lambdas
           - https://peer-ap1.decentraland.org/lambdas
           - https://interconnected.online/lambdas
+
 {% endif %}
