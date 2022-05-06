@@ -123,3 +123,7 @@ matrix_synapse_configuration_extension_yaml: |
           - https://interconnected.online/lambdas
 
 {% endif %}
+
+# To enable the metrics endpoint bearer token
+matrix_nginx_proxy_proxy_synapse_metrics_basic_auth_enabled: true
+matrix_nginx_proxy_proxy_synapse_metrics_basic_auth_key: {{ METRICS_BEARER_TOKEN }}
