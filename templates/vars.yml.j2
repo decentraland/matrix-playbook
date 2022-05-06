@@ -47,7 +47,7 @@ matrix_nginx_proxy_https_enabled: false
 
 matrix_client_element_enabled: false
 {% set use_presence = USE_PRESENCE|default('false') in ['true'] %}
-matrix_synapse_use_presence: {{ use_presence }}
+matrix_synapse_presence_enabled: {{ use_presence }}
 
 {%- set enable_open_registration = ENABLE_OPEN_REGISTRATION|default('false') in ['true'] -%}
 {% if enable_open_registration %}
