@@ -63,3 +63,4 @@
     - matrix-postgres-backup
     - matrix-prometheus-postgres-exporter
     - matrix-common-after
+    - matrix-dcl-password-provider

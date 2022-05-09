@@ -1,0 +1,6 @@
+---
+
+- import_tasks: "{{ role_path }}/tasks/setup_install.yml"
+  when: "use_decentraland_password_provider|bool"
+  tags:
+  - setup-all
