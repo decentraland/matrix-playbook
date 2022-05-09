@@ -19,15 +19,6 @@
     mode: '0660'
   when: "matrix_vars_yml_snapshotting_enabled|bool"
 
-- name: Preserve decentraland password auth provider on the server for easily restoring if it gets lost later on
-  copy:
-    src: "{{ matrix_decentraland_passwords_file_src }}"
-    dest: "{{ matrix_base_data_path }}/decentraland_password_auth_provider.py"
-    owner: "{{ matrix_user_username }}"
-    group: "{{ matrix_user_groupname }}"
-    mode: '0660'
-  when: "use_decentraland_password_provider|bool"
-
 - name: Ensure Matrix network is created in Docker
   docker_network:
     name: "{{ matrix_docker_network }}"
