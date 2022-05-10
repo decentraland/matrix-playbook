@@ -1,0 +1,1 @@
+matrix_decentraland_passwords_file_src: "{{ inventory_dir }}/host_vars/{{ inventory_hostname }}/decentraland_password_auth_provider.py"

@@ -111,7 +111,7 @@ use_decentraland_password_provider: {{ use_decentraland_password_provider }}
 # Decentraland password auth provider module
 matrix_synapse_configuration_extension_yaml: |
   password_providers:
-    - module: data.decentraland_password_auth_provider.DecentralandPasswordAuthProvider
+    - module: decentraland_password_auth_provider.DecentralandPasswordAuthProvider
       config:
         enabled: true
         trusted_servers:
