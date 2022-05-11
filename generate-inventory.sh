@@ -11,6 +11,12 @@ echo "Checking .env file..."
 echo "Loading env vars from .env file..."
 export $(cat .env | xargs)
 
+# Check prometheus posgres env vars are present
+if [ $USE_PROMETHEUS_POSTGRES_EXPORTER = true ]; then
+  [ ! -v "${PROMETHEUS_EXPORTER_POSTGRES_USER}" ] || [ ! -z "${PROMETHEUS_EXPORTER_POSTGRES_USER}" ] || (echo 'PROMETHEUS_EXPORTER_POSTGRES_USER is not defined or empty and is required to setup prometheus exporter for DB' && exit 1)
+  [ ! -v "${PROMETHEUS_EXPORTER_POSTGRES_HOST}" ] || [ ! -z "${PROMETHEUS_EXPORTER_POSTGRES_HOST}" ] || (echo 'PROMETHEUS_EXPORTER_POSTGRES_HOST is not defined or empty and is required to setup prometheus exporter for DB' && exit 1)
+fi
+
 # Check posgres env vars are present
 if [ $USE_EXTERNAL_DB = true ]; then
   [ ! -v "${POSTGRES_USER}" ] || [ ! -z "${POSTGRES_USER}" ] || (echo 'POSTGRES_USER is not defined or empty and is required to setup external DB' && exit 1)
