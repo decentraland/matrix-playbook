@@ -1,4 +1,5 @@
 ---
+- import_tasks: "{{ role_path }}/tasks/ext/dcl-password-provider/setup.yml"
 
 - import_tasks: "{{ role_path }}/tasks/ext/encryption-disabler/setup.yml"
 

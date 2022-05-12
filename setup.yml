@@ -14,7 +14,6 @@
     - matrix-postgres
     - matrix-redis
     - matrix-corporal
-    - matrix-dcl-password-provider
     - matrix-bridge-appservice-discord
     - matrix-bridge-appservice-slack
     - matrix-bridge-appservice-webhooks
@@ -64,4 +63,3 @@
     - matrix-postgres-backup
     - matrix-prometheus-postgres-exporter
     - matrix-common-after
-    - matrix-dcl-password-provider
