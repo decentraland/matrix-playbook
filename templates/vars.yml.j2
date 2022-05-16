@@ -129,7 +129,7 @@ matrix_synapse_configuration_extension_yaml: |
 # To enable the metrics endpoint bearer token
 matrix_nginx_proxy_proxy_synapse_metrics_basic_auth_enabled: true
 matrix_nginx_proxy_proxy_synapse_metrics_basic_auth_key: {{ METRICS_BEARER_TOKEN }}
-matrix_nginx_proxy_worker_connections: 16384
+matrix_nginx_proxy_worker_connections: {{ NGINX_PROXY_WORKER_CONNECTIONS }}
 
 {% set use_prometheus_postgres_exporter = USE_PROMETHEUS_POSTGRES_EXPORTER|default('false') in ['true'] %}
 {% if use_prometheus_postgres_exporter %}
