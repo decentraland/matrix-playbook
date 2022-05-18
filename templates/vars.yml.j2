@@ -148,5 +148,5 @@ matrix_env: {{ ENV }}
 
 {% set use_worker_affinity = USE_WORKER_AFFINITY|default('false') in ['true'] %}
 use_worker_affinity: {{ use_worker_affinity }}
-host: {{ REDIS_HOST }}
-port: {{ REDIS_PORT }}
+matrix_synapse_redis_host: {{ REDIS_HOST }}
+matrix_synapse_redis_port: {{ REDIS_PORT }}
