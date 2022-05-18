@@ -25,6 +25,11 @@ if [ $USE_EXTERNAL_DB = true ]; then
   [ ! -v "${POSTGRES_DATABASE}" ] || [ ! -z "${POSTGRES_DATABASE}" ] || (echo 'POSTGRES_DATABASE is not defined or empty and is required to setup external DB' && exit 1)
 fi
 
+if [ $USE_ELASTI_CACHE = true ]; then
+  [ ! -v "${REDIS_HOST}" ] || [ ! -z "${REDIS_HOST}" ] || (echo 'REDIS_HOST is not defined or empty and is required to setup external Redis' && exit 1)
+  [ ! -v "${REDIS_PORT}" ] || [ ! -z "${REDIS_PORT}" ] || (echo 'REDIS_PORT is not defined or empty and is required to setup external Redis' && exit 1)
+fi
+
 # Check if jinja 2 is installed
 if ! [ -x "$(command -v j2)" ]; then
   echo -n "Error: j2 is not installed..." >&2

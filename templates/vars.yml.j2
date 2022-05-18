@@ -148,3 +148,11 @@ matrix_env: {{ ENV }}
 
 {% set use_worker_affinity = USE_WORKER_AFFINITY|default('false') in ['true'] %}
 use_worker_affinity: {{ use_worker_affinity }}
+
+{%- set use_external_redis = USE_ELASTI_CACHE|default('false') in ['true'] -%}
+{% if use_external_redis %}
+matrix_redis_enabled: false
+matrix_synapse_redis_enabled: true
+matrix_synapse_redis_host: {{ REDIS_HOST }}
+matrix_synapse_redis_port: {{ REDIS_PORT }}
+{% endif %}
