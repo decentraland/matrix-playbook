@@ -41,9 +41,9 @@
 
 - name: Log into DockerHub
   docker_login:
-    username: {{ docker_username }}
-    password: {{ docker_password }}
-    email: {{ docker_email }}
+    username: "{{ docker_username }}"
+    password: "{{ docker_password }}"
+    email: "{{ docker_email }}"
 
 - name: "Ensure {{ matrix_ntpd_service }} is started and autoruns"
   service:
