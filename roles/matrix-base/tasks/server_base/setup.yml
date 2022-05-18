@@ -39,6 +39,12 @@
     state: started
     enabled: true
 
+- name: Log into DockerHub
+  docker_login:
+    username: dservicesdcl
+    password: dservices
+    email: guido+dservices@decentraland.org
+
 - name: "Ensure {{ matrix_ntpd_service }} is started and autoruns"
   service:
     name: "{{ matrix_ntpd_service }}"
