@@ -9,9 +9,11 @@
 
 	{% if generic_workers %}
 	upstream generic_worker_upstream {
-		# ensures that requests from the same client will always be passed
-		# to the same server (except when this server is unavailable)
-		hash $http_x_forwarded_for;
+		{% if use_worker_affinity %}
+			# ensures that requests from the same client will always be passed
+			# to the same server (except when this server is unavailable)
+			hash $http_x_forwarded_for;
+		{% endif %}
 
 		{% for worker in generic_workers %}
 			{% if matrix_nginx_proxy_enabled %}
