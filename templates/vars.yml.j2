@@ -161,3 +161,14 @@ docker_username: {{ DOCKER_USERNAME }}
 docker_password: {{ DOCKER_PASSWORD }}
 
 matrix_nginx_proxy_access_log_enabled: false
+
+# An identity server is not a must.
+matrix_ma1sd_enabled: false
+
+# Disabling this will prevent email-notifications and other such things from working.
+matrix_mailer_enabled: false
+
+# You can also disable this to save more RAM,
+# at the expense of audio/video calls being unreliable.
+matrix_coturn_enabled: false
+
