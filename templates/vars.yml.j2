@@ -162,8 +162,8 @@ docker_password: {{ DOCKER_PASSWORD }}
 
 matrix_nginx_proxy_access_log_enabled: false
 
-# An identity server is not a must.
-matrix_ma1sd_enabled: false
+# We need the identity service as it's used for user directory searches.
+matrix_ma1sd_enabled: true
 
 # Disabling this will prevent email-notifications and other such things from working.
 matrix_mailer_enabled: false
