@@ -172,3 +172,12 @@ matrix_mailer_enabled: false
 # at the expense of audio/video calls being unreliable.
 matrix_coturn_enabled: false
 
+matrix_nginx_proxy_proxy_grafana_enabled: true
+
+matrix_nginx_proxy_proxy_synapse_additional_server_configuration_blocks:
+  - 'location /_synapse/node-exporter/ {
+  resolver 127.0.0.11 valid=5s;
+  proxy_pass http://matrix-prometheus-node-exporter:9100/;
+  auth_basic "protected";
+  auth_basic_user_file /nginx-data/matrix-synapse-metrics-htpasswd;
+  }'
