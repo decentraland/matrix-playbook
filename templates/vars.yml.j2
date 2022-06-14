@@ -183,4 +183,9 @@ matrix_nginx_proxy_proxy_synapse_additional_server_configuration_blocks:
   }'
 
 
-matrix_synapse_container_extra_arguments: ['-m=2g']
+matrix_synapse_container_extra_arguments: >
+  {{
+    matrix_synapse_container_extra_arguments|default([])
+    +
+    ['-m=3g']
+  }}
