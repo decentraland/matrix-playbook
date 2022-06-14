@@ -85,9 +85,6 @@ matrix_synapse_workers_generic_worker_endpoints:
   - ^/_matrix/client/(r0|v3|unstable)/rooms/.*/receipt
   - ^/_matrix/client/(r0|v3|unstable)/rooms/.*/read_markers
 
-  # Presence requests
-  - ^/_matrix/client/(api/v1|r0|v3|unstable)/presence/
-
   # Additionally, the following REST endpoints can be handled for GET requests:
 
   # FIXME: ADDITIONAL CONDITIONS REQUIRED: to be enabled manually

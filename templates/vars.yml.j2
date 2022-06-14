@@ -43,8 +43,6 @@ matrix_synapse_container_client_api_host_bind_port: '127.0.0.1:8008'
 
 matrix_synapse_workers_enabled: true
 
-matrix_synapse_workers_generic_workers_count: {{ GENERIC_WORKERS_COUNT }}
-
 matrix_nginx_proxy_https_enabled: false
 
 
@@ -57,6 +55,7 @@ matrix_synapse_presence_enabled: {{ use_presence }}
 matrix_synapse_enable_registration: true
 {% endif %}
 {% if ENV not in ['prd'] %}
+matrix_synapse_log_level: 'DEBUG'
 # Config to support Romeo and Juliet benchmark and testing tools (429 - too many requests):
 matrix_synapse_rc_registration:
   per_second: 5
@@ -106,12 +105,49 @@ matrix_synapse_database_user: '{{POSTGRES_USER}}'
 matrix_synapse_database_password: '{{POSTGRES_PASSWORD}}'
 matrix_synapse_database_database: '{{POSTGRES_DATABASE}}'
 {% endif %}
+
+matrix_synapse_workers_enabled_list:
+  - { type: generic_worker, instanceId: 'generic-18111', port: 18111, metrics_port: 19111 }
+  - { type: generic_worker, instanceId: 'generic-18112', port: 18112, metrics_port: 19112 }
+  - { type: generic_worker, instanceId: 'generic-18113', port: 18113, metrics_port: 19113 }
+  - { type: generic_worker, instanceId: 'event-persister1', port: 18114, metrics_port: 19114 }
+  - { type: generic_worker, instanceId: 'event-persister2', port: 18115, metrics_port: 19115 }
+  - { type: generic_worker, instanceId: 'presence-worker', port: 18116, metrics_port: 19116 }
+  - { type: generic_worker, instanceId: 'background-worker', port: 18117, metrics_port: 19117 }
+  - { type: pusher, instanceId: 'pusher', port: 0, metrics_port: 19200 }
+  - { type: frontend_proxy, instanceId: 'frontend-proxy', port: 18771, metrics_port: 19200 }
+
 {% set use_decentraland_password_provider = USE_DECENTRALAND_PASSWORD_PROVIDER|default('false') in ['true'] %}
-# Decentraland Password Provider
 use_decentraland_password_provider: {{ use_decentraland_password_provider }}
-{% if use_decentraland_password_provider %}
-# Decentraland password auth provider module
+# Decentraland Password Provider
+
 matrix_synapse_configuration_extension_yaml: |
+  database:
+    args:
+      cp_min: 5
+      cp_max: 35
+  instance_map:
+    event-persister1:
+      host: matrix-synapse-worker-event-persister1
+      port: 18114
+    event-persister2:
+      host: matrix-synapse-worker-event-persister2
+      port: 18115
+    presence-worker:
+      host: matrix-synapse-worker-presence-worker
+      port: 18116
+    background-worker:
+      host: matrix-synapse-worker-background-worker
+      port: 18117
+  stream_writers:
+    events:
+      - event-persister2
+      - event-persister1
+    presence: presence-worker
+  run_background_tasks_on: background-worker
+
+{% if use_decentraland_password_provider %}
+  # Decentraland password auth provider module
   password_providers:
     - module: decentraland_password_auth_provider.DecentralandPasswordAuthProvider
       config:
@@ -181,3 +217,8 @@ matrix_nginx_proxy_proxy_synapse_additional_server_configuration_blocks:
   auth_basic "protected";
   auth_basic_user_file /nginx-data/matrix-synapse-metrics-htpasswd;
   }'
+  
+# Isolate matrix homerserver
+matrix_synapse_federation_enabled: false
+
+# Cache factors per type

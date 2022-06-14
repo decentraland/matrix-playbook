@@ -1,8 +1,8 @@
 {% for worker in matrix_nginx_proxy_proxy_synapse_workers_enabled_list %}
-  - job_name: '{{ matrix_env }}-synapse-{{ worker.type }}-{{ worker.instanceId }}'
+  - job_name: '{{ matrix_env }}-synapse-{{ worker.instanceId }}'
     scrape_interval: 60s
     scrape_timeout: 60s
-    metrics_path: /_synapse-worker-{{ worker.type }}-{{ worker.instanceId }}/metrics
+    metrics_path: /_synapse-worker-{{ worker.instanceId }}/metrics
 {% if matrix_nginx_proxy_proxy_synapse_metrics_basic_auth_enabled %}
     basic_auth:
       username: prometheus

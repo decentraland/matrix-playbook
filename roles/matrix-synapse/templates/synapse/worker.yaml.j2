@@ -1,6 +1,6 @@
 #jinja2: lstrip_blocks: "True"
 worker_app: synapse.app.{{ matrix_synapse_worker_details.type }}
-worker_name: {{ matrix_synapse_worker_details.type ~ ':' ~ matrix_synapse_worker_details.port }}
+worker_name: {{ matrix_synapse_worker_details.instanceId }}
 
 {% if matrix_synapse_replication_listener_enabled %}
 worker_replication_host: matrix-synapse
@@ -11,6 +11,12 @@ worker_replication_http_port: {{ matrix_synapse_replication_http_port }}
 
 {% set http_resources = [] %}
 
+{% if matrix_synapse_worker_details.instanceId.startswith('event-persister') %}
+  {% set http_resources = http_resources + ['replication'] %}
+{% else %}
+{% if matrix_synapse_worker_details.instanceId.startswith('presence-worker') %}
+  {% set http_resources = http_resources + ['replication'] %}
+{% endif %}
 {% if matrix_synapse_worker_details.type in ['generic_worker', 'frontend_proxy', 'user_dir'] %}
   {% set http_resources = http_resources + ['client'] %}
 {% endif %}
@@ -20,6 +26,9 @@ worker_replication_http_port: {{ matrix_synapse_replication_http_port }}
 {% if matrix_synapse_worker_details.type in ['media_repository'] %}
   {% set http_resources = http_resources + ['media'] %}
 {% endif %}
+
+{% endif %}
+
 
 {% if http_resources|length > 0 or matrix_synapse_metrics_enabled %}
 worker_listeners:
