@@ -182,10 +182,9 @@ matrix_nginx_proxy_proxy_synapse_additional_server_configuration_blocks:
   auth_basic_user_file /nginx-data/matrix-synapse-metrics-htpasswd;
   }'
 
-
 matrix_synapse_container_extra_arguments: >
   {{
     matrix_synapse_container_extra_arguments|default([])
     +
-    ['-m=3g']
+    ['-m={{CONTAINER_MEMORY|default('3g',true)}}']
   }}
