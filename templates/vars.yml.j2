@@ -107,11 +107,14 @@ matrix_synapse_database_database: '{{POSTGRES_DATABASE}}'
 {% endif %}
 
 matrix_synapse_workers_enabled_list:
-  - { type: generic_worker, instanceId: 'generic-18111', port: 18111, metrics_port: 19111 }
-  - { type: generic_worker, instanceId: 'generic-18112', port: 18112, metrics_port: 19112 }
-  - { type: generic_worker, instanceId: 'generic-18113', port: 18113, metrics_port: 19113 }
-  - { type: generic_worker, instanceId: 'event-persister1', port: 18114, metrics_port: 19114 }
-  - { type: generic_worker, instanceId: 'event-persister2', port: 18115, metrics_port: 19115 }
+  - { type: generic_worker, instanceId: 'initial-sync-1', port: 18111, metrics_port: 19111 }
+  - { type: generic_worker, instanceId: 'initial-sync-2', port: 18119, metrics_port: 19119 }
+  - { type: generic_worker, instanceId: 'sync-1', port: 18112, metrics_port: 19112 }
+  - { type: generic_worker, instanceId: 'sync-2', port: 18118, metrics_port: 19118 }
+  - { type: generic_worker, instanceId: 'client-1', port: 18113, metrics_port: 19113 }
+  - { type: generic_worker, instanceId: 'client-2', port: 18120, metrics_port: 19120 }
+  - { type: generic_worker, instanceId: 'event-persister-1', port: 18114, metrics_port: 19114 }
+  - { type: generic_worker, instanceId: 'event-persister-2', port: 18115, metrics_port: 19115 }
   - { type: generic_worker, instanceId: 'presence-worker', port: 18116, metrics_port: 19116 }
   - { type: generic_worker, instanceId: 'background-worker', port: 18117, metrics_port: 19117 }
   - { type: pusher, instanceId: 'pusher', port: 0, metrics_port: 19200 }
@@ -127,11 +130,11 @@ matrix_synapse_configuration_extension_yaml: |
       cp_min: 5
       cp_max: 35
   instance_map:
-    event-persister1:
-      host: matrix-synapse-worker-event-persister1
+    event-persister-1:
+      host: matrix-synapse-worker-event-persister-1
       port: 18114
-    event-persister2:
-      host: matrix-synapse-worker-event-persister2
+    event-persister-2:
+      host: matrix-synapse-worker-event-persister-2
       port: 18115
     presence-worker:
       host: matrix-synapse-worker-presence-worker
@@ -141,8 +144,8 @@ matrix_synapse_configuration_extension_yaml: |
       port: 18117
   stream_writers:
     events:
-      - event-persister2
-      - event-persister1
+      - event-persister-2
+      - event-persister-1
     presence: presence-worker
   run_background_tasks_on: background-worker
 
@@ -208,7 +211,7 @@ matrix_mailer_enabled: false
 # at the expense of audio/video calls being unreliable.
 matrix_coturn_enabled: false
 
-matrix_nginx_proxy_proxy_grafana_enabled: false
+matrix_nginx_proxy_proxy_grafana_enabled: true
 
 matrix_nginx_proxy_proxy_synapse_additional_server_configuration_blocks:
   - 'location /_synapse/node-exporter/ {
@@ -217,7 +220,7 @@ matrix_nginx_proxy_proxy_synapse_additional_server_configuration_blocks:
   auth_basic "protected";
   auth_basic_user_file /nginx-data/matrix-synapse-metrics-htpasswd;
   }'
-  
+
 # Isolate matrix homerserver
 matrix_synapse_federation_enabled: false
 

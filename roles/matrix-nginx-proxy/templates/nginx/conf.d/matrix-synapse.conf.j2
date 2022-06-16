@@ -1,7 +1,12 @@
 #jinja2: lstrip_blocks: "True"
 
-{% set generic_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('instanceId', 'match', 'generic_*')|list %}
+
+{% set initial_sync_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('instanceId', 'match', 'initial-sync-*')|list %}
+{% set sync_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('instanceId', 'match', 'sync-*')|list %}
+{% set client_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('instanceId', 'match', 'client-*')|list %}
 {% set presence_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('instanceId', 'equalto', 'presence_worker')|list %}
+
+{% set generic_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('instanceId', 'match', 'generic_*')|list %}
 {% set media_repository_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'media_repository')|list %}
 {% set user_dir_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'user_dir')|list %}
 {% set frontend_proxy_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'frontend_proxy')|list %}
@@ -17,6 +22,55 @@
 		{% endif %}
 
 		{% for worker in generic_workers %}
+			{% if matrix_nginx_proxy_enabled %}
+				server "matrix-synapse-worker-{{ worker.instanceId }}:{{ worker.port }}";
+			{% else %}
+				server "127.0.0.1:{{ worker.port }}";
+			{% endif %}
+		{% endfor %}
+	}
+	{% endif %}
+
+	{% if initial_sync_workers %}
+	upstream initial_sync_worker_upstream {
+
+		{% for worker in initial_sync_workers %}
+			{% if matrix_nginx_proxy_enabled %}
+				server "matrix-synapse-worker-{{ worker.instanceId }}:{{ worker.port }}";
+			{% else %}
+				server "127.0.0.1:{{ worker.port }}";
+			{% endif %}
+		{% endfor %}
+	}
+	{% endif %}
+
+	{% if sync_workers %}
+	upstream sync_worker_upstream {
+		{% if use_worker_affinity %}
+			# ensures that requests from the same client will always be passed
+			# to the same server (except when this server is unavailable)
+			hash $http_authorization;
+		{% endif %}
+
+		{% for worker in sync_workers %}
+			{% if matrix_nginx_proxy_enabled %}
+				server "matrix-synapse-worker-{{ worker.instanceId }}:{{ worker.port }}";
+			{% else %}
+				server "127.0.0.1:{{ worker.port }}";
+			{% endif %}
+		{% endfor %}
+	}
+	{% endif %}
+
+	{% if client_workers %}
+	upstream client_worker_upstream {
+
+		{% if use_worker_affinity %}
+		# ensures that requests from the same client will always be passed
+		# to the same server (except when this server is unavailable)
+		hash $http_authorization;
+		{% endif %}
+		{% for worker in client_workers %}
 			{% if matrix_nginx_proxy_enabled %}
 				server "matrix-synapse-worker-{{ worker.instanceId }}:{{ worker.port }}";
 			{% else %}
@@ -102,9 +156,154 @@ server {
 			{% endfor %}
 		{% endif %}
 
+		{% if initial_sync_workers and sync_workers %}
+			location ~ ^/_matrix/client/(r0|v3)/sync$ {
+				proxy_set_header Host $host;
+				if ($arg_since) {
+					proxy_pass http://sync_worker_upstream$request_uri;
+				}
+				if ($arg_since = "") {
+					proxy_pass http://initial_sync_worker_upstream$request_uri;
+				}
+			}
+		{% endif %}
+
+		{% if initial_sync_workers %}
+			location ~ ^/_matrix/client/(api/v1|r0|v3|unstable)/login$ {
+				proxy_pass http://initial_sync_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(r0|v3|unstable)/register$ {
+				proxy_pass http://initial_sync_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/v1/register/m.login.registration_token/validity$ {
+				proxy_pass http://initial_sync_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(api/v1|r0|v3)/initialSync$ {
+				proxy_pass http://initial_sync_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(api/v1|r0|v3)/rooms/[^/]+/initialSync$ {
+				proxy_pass http://initial_sync_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+		{% endif %}
+
 		{% if presence_workers %}
-			location /_matrix/client/(api/v1|r0|v3|unstable)/presence/ {
+			location ~ ^/_matrix/client/(api/v1|r0|v3|unstable)/presence/ {
 				proxy_pass http://presence_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+		{% endif %}
+
+		{% if client_workers %}
+			location ~ ^/_matrix/client/(api/v1|r0|v3|unstable)/createRoom$ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(api/v1|r0|v3|unstable)/publicRooms$ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/joined_members$ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/context/.*$ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/members$ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/state$ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/v1/rooms/.*/hierarchy$ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/unstable/org.matrix.msc2716/rooms/.*/batch_send$ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/unstable/im.nheko.summary/rooms/.*/summary$ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(r0|v3|unstable)/account/3pid$ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(r0|v3|unstable)/account/whoami$ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(r0|v3|unstable)/devices$ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/versions$ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(api/v1|r0|v3|unstable)/voip/turnServer$ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/event/ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(api/v1|r0|v3|unstable)/joined_rooms$ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(api/v1|r0|v3|unstable)/search$ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			  
+			location ~ ^/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/redact {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/send {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/state/ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(api/v1|r0|v3|unstable)/rooms/.*/(join|invite|leave|ban|unban|kick)$ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(api/v1|r0|v3|unstable)/join/ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(api/v1|r0|v3|unstable)/profile/ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+
+			location ~ ^/_matrix/client/(r0|v3|unstable)/sendToDevice/ {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+
+			location ~ ^/_matrix/client/(r0|v3|unstable)/.*/tags {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			location ~ ^/_matrix/client/(r0|v3|unstable)/.*/account_data {
+				proxy_pass http://client_worker_upstream$request_uri;
 				proxy_set_header Host $host;
 			}
 		{% endif %}
