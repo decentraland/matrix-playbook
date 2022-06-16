@@ -105,26 +105,15 @@ matrix_synapse_database_host: '{{POSTGRES_HOST}}'
 matrix_synapse_database_user: '{{POSTGRES_USER}}'
 matrix_synapse_database_password: '{{POSTGRES_PASSWORD}}'
 matrix_synapse_database_database: '{{POSTGRES_DATABASE}}'
+{% else %}
+matrix_postgres_process_extra_arguments: [
+  "-c 'max_connections={{ POSTGRES_MAX_CONNECTIONS }}'"
+]
 {% endif %}
+
 {% set use_decentraland_password_provider = USE_DECENTRALAND_PASSWORD_PROVIDER|default('false') in ['true'] %}
 # Decentraland Password Provider
 use_decentraland_password_provider: {{ use_decentraland_password_provider }}
-{% if use_decentraland_password_provider %}
-# Decentraland password auth provider module
-matrix_synapse_configuration_extension_yaml: |
-  password_providers:
-    - module: decentraland_password_auth_provider.DecentralandPasswordAuthProvider
-      config:
-        enabled: true
-        trusted_servers:
-          - https://peer.decentraland.org/lambdas
-          - https://peer-ec1.decentraland.org/lambdas
-          - https://peer-wc1.decentraland.org/lambdas
-          - https://peer-eu1.decentraland.org/lambdas
-          - https://peer-ap1.decentraland.org/lambdas
-          - https://interconnected.online/lambdas
-
-{% endif %}
 
 # To enable the metrics endpoint bearer token
 matrix_nginx_proxy_proxy_synapse_metrics_basic_auth_enabled: true
@@ -140,9 +129,6 @@ matrix_prometheus_postgres_exporter_database_username: '{{PROMETHEUS_EXPORTER_PO
 matrix_prometheus_postgres_exporter_database_password: '{{PROMETHEUS_EXPORTER_POSTGRES_PASSWORD}}'
 {% endif %}
 
-matrix_postgres_process_extra_arguments: [
-  "-c 'max_connections={{ POSTGRES_MAX_CONNECTIONS }}'"
-]
 
 matrix_env: {{ ENV }}
 
@@ -181,3 +167,29 @@ matrix_nginx_proxy_proxy_synapse_additional_server_configuration_blocks:
   auth_basic "protected";
   auth_basic_user_file /nginx-data/matrix-synapse-metrics-htpasswd;
   }'
+
+
+# Synapse configuration extension yaml
+
+matrix_synapse_configuration_extension_yaml: |
+{%- set connection_pool_min = CP_MIN|default('5') %}
+{%- set connection_pool_max = CP_MIN|default('35') %}
+  # DB Connection Pool
+  database:
+    args:
+      cp_min: {{ connection_pool_min }}
+      cp_max: {{ connection_pool_max }}
+{% if use_decentraland_password_provider %}
+  # Decentraland password auth provider module
+  password_providers:
+    - module: decentraland_password_auth_provider.DecentralandPasswordAuthProvider
+      config:
+        enabled: true
+        trusted_servers:
+          - https://peer.decentraland.org/lambdas
+          - https://peer-ec1.decentraland.org/lambdas
+          - https://peer-wc1.decentraland.org/lambdas
+          - https://peer-eu1.decentraland.org/lambdas
+          - https://peer-ap1.decentraland.org/lambdas
+          - https://interconnected.online/lambdas
+{% endif %}
