@@ -193,3 +193,10 @@ matrix_synapse_configuration_extension_yaml: |
           - https://peer-ap1.decentraland.org/lambdas
           - https://interconnected.online/lambdas
 {% endif %}
+
+# Caching
+caches:
+  per_cache_factors:
+    stateGroupCache: {{ STATE_GROUP_CACHE_FACTOR|default('2.0')}}
+    getEvent: {{ GET_EVENT_CACHE_FACTOR|default('2.0')}}
+  sync_response_cache_duration: {{ SYNC_CACHE_DURATION|default('2m') }}
