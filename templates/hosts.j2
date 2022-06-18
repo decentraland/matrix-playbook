@@ -15,5 +15,11 @@
 # You may sometimes need to explicitly add the argument `ansible_python_interpreter=/usr/bin/python3`
 # to the host line below.
 
+{% if SUBDOMAIN|length %}
+    {% set domain = SUBDOMAIN + '.' + MATRIX_DOMAIN %}
+{% else %}
+    {% set domain = MATRIX_DOMAIN|default('localhost') %}
+{% endif %}
+
 [matrix_servers]
-{{SUBDOMAIN}}.{{MATRIX_DOMAIN}} ansible_ssh_user={{SSH_USER}} become=true become_user=root ansible_connection=local
+{{domain}} ansible_ssh_user={{SSH_USER}} become=true become_user=root ansible_connection=local
