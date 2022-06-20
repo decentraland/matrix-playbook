@@ -150,11 +150,15 @@
 
 - name: Build instances list
   set_fact:
-    generated_instance_map: "{{ generated_instance_map | default({}) | combine ({ 
-      item.ansible_facts.worker.sub_type + '-' + item.ansible_facts.worker.instanceId|string: {
-        'host': 'matrix-synapse-worker-' + item.ansible_facts.worker.sub_type + '-' + item.ansible_facts.worker.instanceId|string,
-        'port': item.ansible_facts.worker.port
-      }}) }}"
+    generated_instance_map:
+      "{{ generated_instance_map | default({}) | combine (
+          {
+            item.ansible_facts.worker.sub_type + '-' + item.ansible_facts.worker.instanceId|string: {
+              'host': 'matrix-synapse-worker-' + item.ansible_facts.worker.sub_type + '-' + item.ansible_facts.worker.instanceId|string,
+              'port': item.ansible_facts.worker.port
+            }
+          }
+        )}}"
   with_items: |
     {{
       matrix_synapse_workers_list_results_presence_workers.results
@@ -179,7 +183,7 @@
 
 - name: Build stream_writer
   set_fact:
-    generated_stream_writers:
+    generated_stream_writers: |-
       presence: "{{ presence_workers[0] }}"
       events: "{{ event_persister_workers }}"
 
