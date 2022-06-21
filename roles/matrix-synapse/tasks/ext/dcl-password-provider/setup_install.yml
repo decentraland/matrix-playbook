@@ -13,7 +13,9 @@
     matrix_synapse_password_providers_enabled: true
 
     matrix_synapse_container_extra_arguments: >
-      {{ matrix_synapse_container_extra_arguments|default([]) }}
-      +
-      ["--mount type=bind,src={{ matrix_synapse_ext_path }}/decentraland_password_auth_provider.py,dst={{ matrix_synapse_in_container_python_packages_path }}/decentraland_password_auth_provider.py,ro"]
+      {{ 
+        matrix_synapse_container_extra_arguments|default([])
+        +
+        ["--mount type=bind,src={{ matrix_synapse_ext_path }}/decentraland_password_auth_provider.py,dst={{ matrix_synapse_in_container_python_packages_path }}/decentraland_password_auth_provider.py,ro"]
+      }}
   when: "use_decentraland_password_provider|bool"
