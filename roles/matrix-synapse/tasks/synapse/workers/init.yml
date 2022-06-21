@@ -183,7 +183,7 @@
 
 - name: Build stream_writer
   set_fact:
-    generated_stream_writers: |-
+    generated_stream_writers:
       presence: "{{ presence_workers[0] }}"
       events: "{{ event_persister_workers }}"
 
