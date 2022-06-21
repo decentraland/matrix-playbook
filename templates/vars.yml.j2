@@ -168,7 +168,6 @@ matrix_nginx_proxy_proxy_synapse_additional_server_configuration_blocks:
   auth_basic_user_file /nginx-data/matrix-synapse-metrics-htpasswd;
   }'
 
-
 # Synapse configuration extension yaml
 
 matrix_synapse_configuration_extension_yaml: |
@@ -200,3 +199,5 @@ caches:
     stateGroupCache: {{ STATE_GROUP_CACHE_FACTOR|default('2.0')}}
     getEvent: {{ GET_EVENT_CACHE_FACTOR|default('2.0')}}
   sync_response_cache_duration: {{ SYNC_CACHE_DURATION|default('2m') }}
+  
+matrix_synapse_container_extra_arguments: ['-m={{CONTAINER_MEMORY}}']
