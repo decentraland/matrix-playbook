@@ -172,8 +172,8 @@ matrix_nginx_proxy_proxy_synapse_additional_server_configuration_blocks:
 # Synapse configuration extension yaml
 
 matrix_synapse_configuration_extension_yaml: |
-{%- set connection_pool_min = CP_MIN|default('5') %}
-{%- set connection_pool_max = CP_MIN|default('35') %}
+{%- set connection_pool_min = CONNECTION_POOL_MIN|default('5') %}
+{%- set connection_pool_max = CONNECTION_POOL_MAX|default('35') %}
   # DB Connection Pool
   database:
     args:
