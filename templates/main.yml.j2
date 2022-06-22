@@ -203,4 +203,4 @@ matrix_synapse_configuration_extension_yaml: |
 
 matrix_synapse_federation_enabled: {{ federation_enabled }}
 
-matrix_synapse_container_extra_arguments: ['-m={{CONTAINER_MEMORY}}']
+matrix_synapse_container_extra_arguments: ['-m={{CONTAINER_MEMORY|default('2g')}}']
