@@ -90,6 +90,17 @@
 			{% endif %}
 		{% endfor %}
 	}
+
+	upstream messages_worker_upstream {
+		hash $http_RoomID;
+{% for worker in client_workers %}
+	{% if matrix_nginx_proxy_enabled %}
+		server "matrix-synapse-worker-{{ worker.sub_type }}-{{ worker.instanceId }}:{{ worker.port }}";
+	{% else %}
+		server "127.0.0.1:{{ worker.port }}";
+	{% endif %}
+{% endfor %}
+	}
 	{% endif %}
 
 	{% if account_workers %}
