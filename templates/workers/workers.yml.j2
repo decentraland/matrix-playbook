@@ -1,0 +1,38 @@
+{%- set workers_initial_sync_count = WORKERS_INITIAL_SYNC_COUNT|default('2') %}
+{%- set workers_sync_count = WORKERS_SYNC_COUNT|default('3') %}
+{%- set workers_event_persister_count = WORKERS_EVENT_PERSISTER_COUNT|default('5') %}
+{%- set workers_client_count = WORKERS_CLIENT_COUNT|default('5') %}
+{%- set workers_background_jobs_count = WORKERS_BACKGROUND_JOBS_COUNT|default('1') %}
+{%- set workers_presence_count = WORKERS_PRESENCE_COUNT|default('1') %}
+{%- set workers_account_count = WORKERS_ACCOUNT_COUNT|default('0') %}
+
+{# Include endpoints for each worker type #}
+matrix_synapse_workers_initial_sync_count: {{ workers_initial_sync_count }}
+matrix_synapse_workers_initial_sync_port_range_start: 18121
+matrix_synapse_workers_initial_sync_metrics_range_start: 19121
+
+matrix_synapse_workers_sync_count: {{ workers_sync_count }}
+matrix_synapse_workers_sync_port_range_start: 18131
+matrix_synapse_workers_sync_metrics_range_start: 19131
+
+matrix_synapse_workers_event_persister_count: {{ workers_event_persister_count }}
+matrix_synapse_workers_event_persister_port_range_start: 18141
+matrix_synapse_workers_event_persister_metrics_range_start: 19141
+
+matrix_synapse_workers_client_count: {{ workers_client_count }}
+matrix_synapse_workers_client_port_range_start: 18151
+matrix_synapse_workers_client_metrics_range_start: 19151
+
+# Only 1 background job worker is allowed
+matrix_synapse_workers_background_jobs_count: {{ workers_background_jobs_count }}
+matrix_synapse_workers_background_jobs_port_range_start: 18161
+matrix_synapse_workers_background_jobs_metrics_range_start: 19161
+
+# Only 1 presence worker is allowed
+matrix_synapse_workers_presence_count: {{ workers_presence_count }}
+matrix_synapse_workers_presence_port_range_start: 18171
+matrix_synapse_workers_presence_metrics_range_start: 19171
+
+matrix_synapse_workers_accounts_count: {{ workers_account_count }}
+{# Add endpoints lists #}
+{%- include 'templates/workers/endpoints.yml.j2' %}

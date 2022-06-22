@@ -1,9 +1,16 @@
 #jinja2: lstrip_blocks: "True"
 
-{% set generic_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|list %}
+{% set generic_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|selectattr('sub_type', 'equalto', 'complete')|list %}
+{% set initial_sync_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|selectattr('sub_type', 'equalto', 'initial-sync')|list %}
+{% set sync_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|selectattr('sub_type', 'equalto', 'sync')|list %}
+{% set presence_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|selectattr('sub_type', 'equalto', 'presence')|list %}
+{% set client_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|selectattr('sub_type', 'equalto', 'client')|list %}
+{% set account_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|selectattr('sub_type', 'equalto', 'account-data')|list %}
+
 {% set media_repository_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'media_repository')|list %}
 {% set user_dir_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'user_dir')|list %}
 {% set frontend_proxy_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'frontend_proxy')|list %}
+
 {% if matrix_nginx_proxy_synapse_workers_enabled %}
 	# Round Robin "upstream" pools for workers
 
@@ -12,12 +19,88 @@
 		{% if use_worker_affinity %}
 			# ensures that requests from the same client will always be passed
 			# to the same server (except when this server is unavailable)
-			hash $http_x_forwarded_for;
+			hash $http_authorization;
 		{% endif %}
 
 		{% for worker in generic_workers %}
 			{% if matrix_nginx_proxy_enabled %}
 				server "matrix-synapse-worker-{{ worker.type }}-{{ worker.instanceId }}:{{ worker.port }}";
+			{% else %}
+				server "127.0.0.1:{{ worker.port }}";
+			{% endif %}
+		{% endfor %}
+	}
+	{% endif %}
+
+	{% if initial_sync_workers %}
+	upstream initial_sync_worker_upstream {
+		{% if use_worker_affinity %}
+			hash $http_authorization;
+		{% endif %}
+
+		{% for worker in initial_sync_workers %}
+			{% if matrix_nginx_proxy_enabled %}
+				server "matrix-synapse-worker-{{ worker.sub_type }}-{{ worker.instanceId }}:{{ worker.port }}";
+			{% else %}
+				server "127.0.0.1:{{ worker.port }}";
+			{% endif %}
+		{% endfor %}
+	}
+	{% endif %}
+
+	{% if sync_workers %}
+	upstream sync_worker_upstream {
+		{% if use_worker_affinity %}
+			hash $http_authorization;
+		{% endif %}
+
+		{% for worker in sync_workers %}
+			{% if matrix_nginx_proxy_enabled %}
+				server "matrix-synapse-worker-{{ worker.sub_type }}-{{ worker.instanceId }}:{{ worker.port }}";
+			{% else %}
+				server "127.0.0.1:{{ worker.port }}";
+			{% endif %}
+		{% endfor %}
+	}
+	{% endif %}
+
+	{% if presence_workers %}
+	upstream presence_worker_upstream {
+		{% for worker in presence_workers %}
+			{% if matrix_nginx_proxy_enabled %}
+			server "matrix-synapse-worker-{{ worker.sub_type }}-{{ worker.instanceId }}:{{ worker.port }}";
+			{% else %}
+			server "127.0.0.1:{{ worker.port }}";
+			{% endif %}
+		{% endfor %}
+	}
+	{% endif %}
+
+	{% if client_workers %}
+	upstream client_worker_upstream {
+		{% if use_worker_affinity %}
+			hash $http_authorization;
+		{% endif %}
+
+		{% for worker in client_workers %}
+			{% if matrix_nginx_proxy_enabled %}
+				server "matrix-synapse-worker-{{ worker.sub_type }}-{{ worker.instanceId }}:{{ worker.port }}";
+			{% else %}
+				server "127.0.0.1:{{ worker.port }}";
+			{% endif %}
+		{% endfor %}
+	}
+	{% endif %}
+
+	{% if account_workers %}
+	upstream account_worker_upstream {
+		{% if use_worker_affinity %}
+			hash $http_authorization;
+		{% endif %}
+
+		{% for worker in account_workers %}
+			{% if matrix_nginx_proxy_enabled %}
+				server "matrix-synapse-worker-{{ worker.sub_type }}-{{ worker.instanceId }}:{{ worker.port }}";
 			{% else %}
 				server "127.0.0.1:{{ worker.port }}";
 			{% endif %}
@@ -82,6 +165,51 @@ server {
 			{% for location in matrix_nginx_proxy_synapse_generic_worker_client_server_locations %}
 			location ~ {{ location }} {
 				proxy_pass http://generic_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			{% endfor %}
+		{% endif %}
+
+		{% if initial_sync_workers %}
+			{% for location in matrix_synapse_initial_sync_worker_locations %}
+			location ~ {{ location }} {
+				proxy_pass http://initial_sync_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			{% endfor %}
+		{% endif %}
+
+		{% if sync_workers %}
+			{% for location in matrix_synapse_sync_worker_locations %}
+			location ~ {{ location }} {
+				proxy_pass http://sync_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			{% endfor %}
+		{% endif %}
+
+		{% if presence_workers %}
+			{% for location in matrix_synapse_presence_worker_locations %}
+			location ~ {{ location }} {
+				proxy_pass http://presence_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			{% endfor %}
+		{% endif %}
+
+		{% if client_workers %}
+			{% for location in matrix_synapse_client_worker_locations %}
+			location ~ {{ location }} {
+				proxy_pass http://client_worker_upstream$request_uri;
+				proxy_set_header Host $host;
+			}
+			{% endfor %}
+		{% endif %}
+
+		{% if account_workers %}
+			{% for location in matrix_synapse_accounts_worker_locations %}
+			location ~ {{ location }} {
+				proxy_pass http://accounts_worker_upstream$request_uri;
 				proxy_set_header Host $host;
 			}
 			{% endfor %}
@@ -160,7 +288,7 @@ server {
 	{% if matrix_nginx_proxy_enabled and matrix_nginx_proxy_proxy_synapse_metrics %}
 		{% for worker in matrix_nginx_proxy_proxy_synapse_workers_enabled_list %}
 			{% if worker.metrics_port != 0 %}
-				location /_synapse-worker-{{ worker.type }}-{{ worker.instanceId }}/metrics {
+				location /_synapse-worker-{{ worker.sub_type }}-{{ worker.instanceId }}/metrics {
 					resolver 127.0.0.11 valid=5s;
 					set $backend "matrix-synapse-worker-{{ worker.type }}-{{ worker.instanceId }}:{{ worker.metrics_port }}";
 					proxy_pass http://$backend/_synapse/metrics;

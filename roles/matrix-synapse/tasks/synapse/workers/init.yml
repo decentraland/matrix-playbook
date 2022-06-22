@@ -8,6 +8,7 @@
   set_fact:
     worker:
       type: 'generic_worker'
+      sub_type: 'complete'
       instanceId: "{{ matrix_synapse_workers_generic_workers_port_range_start + item }}"
       port: "{{ matrix_synapse_workers_generic_workers_port_range_start + item }}"
       metrics_port: "{{ matrix_synapse_workers_generic_workers_metrics_range_start + item }}"
@@ -18,6 +19,7 @@
   set_fact:
     worker:
       type: 'federation_sender'
+      sub_type: 'federation_sender'
       instanceId: "{{ item }}"
       port: 0
       metrics_port: "{{ matrix_synapse_workers_federation_sender_workers_metrics_range_start + item }}"
@@ -29,6 +31,7 @@
   set_fact:
     worker:
       type: 'pusher'
+      sub_type: 'pusher'
       instanceId: "{{ item }}"
       port: 0
       metrics_port: "{{ matrix_synapse_workers_pusher_workers_metrics_range_start + item }}"
@@ -40,6 +43,7 @@
   set_fact:
     worker:
       type: 'appservice'
+      sub_type: 'appservice'
       instanceId: "{{ item }}"
       port: 0
       metrics_port: "{{ matrix_synapse_workers_appservice_workers_metrics_range_start + item }}"
@@ -50,6 +54,7 @@
   set_fact:
     worker:
       type: 'media_repository'
+      sub_type: 'media_repository'
       instanceId: "{{ matrix_synapse_workers_media_repository_workers_port_range_start + item }}"
       port: "{{ matrix_synapse_workers_media_repository_workers_port_range_start + item }}"
       metrics_port: "{{ matrix_synapse_workers_media_repository_workers_metrics_range_start + item }}"
@@ -66,6 +71,125 @@
   register: "matrix_synapse_workers_list_results_frontend_proxy_workers"
   loop: "{{ range(0, matrix_synapse_workers_frontend_proxy_workers_count|int)|list }}"
 
+- name: Build inital_sync workers
+  set_fact:
+    worker:
+      type: 'generic_worker'
+      sub_type: 'initial-sync'
+      instanceId: "{{ item }}"
+      port: "{{ matrix_synapse_workers_initial_sync_port_range_start + item }}"
+      metrics_port: "{{ matrix_synapse_workers_initial_sync_metrics_range_start + item }}"
+  register: "matrix_synapse_workers_list_results_initial_sync_workers"
+  loop: "{{ range(0, matrix_synapse_workers_initial_sync_count|int)|list }}"
+
+- name: Build sync workers
+  set_fact:
+    worker:
+      type: 'generic_worker'
+      sub_type: 'sync'
+      instanceId: "{{ item }}"
+      port: "{{ matrix_synapse_workers_sync_port_range_start + item }}"
+      metrics_port: "{{ matrix_synapse_workers_sync_metrics_range_start + item }}"
+  register: "matrix_synapse_workers_list_results_sync_workers"
+  loop: "{{ range(0, matrix_synapse_workers_sync_count|int)|list }}"
+
+- name: Build presence worker
+  set_fact:
+    worker:
+      type: 'generic_worker'
+      sub_type: 'presence'
+      instanceId: "{{ item }}"
+      port: "{{ matrix_synapse_workers_presence_port_range_start + item }}"
+      metrics_port: "{{ matrix_synapse_workers_presence_metrics_range_start + item }}"
+  register: "matrix_synapse_workers_list_results_presence_workers"
+  loop: "{{ range(0, matrix_synapse_workers_presence_count|int)|list }}"
+
+- name: Build client worker
+  set_fact:
+    worker:
+      type: 'generic_worker'
+      sub_type: 'client'
+      instanceId: "{{ item }}"
+      port: "{{ matrix_synapse_workers_client_port_range_start + item }}"
+      metrics_port: "{{ matrix_synapse_workers_client_metrics_range_start + item }}"
+  register: "matrix_synapse_workers_list_results_client_workers"
+  loop: "{{ range(0, matrix_synapse_workers_client_count|int)|list }}"
+
+- name: Build accounts worker
+  set_fact:
+    worker:
+      type: 'generic_worker'
+      sub_type: 'account-data'
+      instanceId: "{{ item }}"
+      port: "{{ matrix_synapse_workers_generic_worker_workers_port_range_start + item }}"
+      metrics_port: "{{ matrix_synapse_workers_generic_worker_workers_metrics_range_start + item }}"
+  register: "matrix_synapse_workers_list_results_accounts_workers"
+  loop: "{{ range(0, matrix_synapse_workers_accounts_count|int)|list }}"
+
+- name: Build background jobs worker
+  set_fact:
+    worker:
+      type: 'generic_worker'
+      sub_type: 'background-jobs'
+      instanceId: "{{ item }}"
+      port: "{{ matrix_synapse_workers_background_jobs_port_range_start + item }}"
+      metrics_port: "{{ matrix_synapse_workers_background_jobs_metrics_range_start + item }}"
+  register: "matrix_synapse_workers_list_results_background_jobs_workers"
+  loop: "{{ range(0, matrix_synapse_workers_background_jobs_count|int)|list }}"
+
+- name: Build event persister workers
+  set_fact:
+    worker:
+      type: 'generic_worker'
+      sub_type: 'event-persister'
+      instanceId: "{{ item }}"
+      port: "{{ matrix_synapse_workers_event_persister_port_range_start + item }}"
+      metrics_port: "{{ matrix_synapse_workers_event_persister_metrics_range_start + item }}"
+  register: "matrix_synapse_workers_list_results_event_persister_workers"
+  loop: "{{ range(0, matrix_synapse_workers_event_persister_count|int)|list }}"
+
+- name: Build instances list
+  set_fact:
+    generated_instance_map:
+      "{{ generated_instance_map | default({}) | combine (
+          {
+            item.ansible_facts.worker.sub_type + '-' + item.ansible_facts.worker.instanceId|string: {
+              'host': 'matrix-synapse-worker-' + item.ansible_facts.worker.sub_type + '-' + item.ansible_facts.worker.instanceId|string,
+              'port': item.ansible_facts.worker.port
+            }
+          }
+        )}}"
+  with_items: |
+    {{
+      matrix_synapse_workers_list_results_presence_workers.results
+      +
+      matrix_synapse_workers_list_results_accounts_workers.results
+      +
+      matrix_synapse_workers_list_results_background_jobs_workers.results
+      +
+      matrix_synapse_workers_list_results_event_persister_workers.results
+    }}
+
+- debug:
+    msg: "generated_instance_map: {{ generated_instance_map }}"
+
+- set_fact:
+    presence_workers: "{{ presence_workers | default([]) + [item.ansible_facts.worker.sub_type + '-' + item.ansible_facts.worker.instanceId|string] }}"
+  with_items: "{{ matrix_synapse_workers_list_results_presence_workers.results }}"
+
+- set_fact:
+    event_persister_workers: "{{ event_persister_workers | default([]) + [item.ansible_facts.worker.sub_type + '-' + item.ansible_facts.worker.instanceId|string] }}"
+  with_items: "{{ matrix_synapse_workers_list_results_event_persister_workers.results }}"
+
+- name: Build stream_writer
+  set_fact:
+    generated_stream_writers:
+      presence: "{{ presence_workers[0] }}"
+      events: "{{ event_persister_workers }}"
+
+- debug:
+    msg: "generated_stream_writers: {{ generated_stream_writers }}"
+
 - set_fact:
     matrix_synapse_dynamic_workers_list: "{{ matrix_synapse_dynamic_workers_list|default([]) + [item.ansible_facts.worker] }}"
   with_items: |
@@ -81,7 +205,27 @@
       matrix_synapse_workers_list_results_media_repository_workers.results
       +
       matrix_synapse_workers_list_results_frontend_proxy_workers.results
+      +
+      matrix_synapse_workers_list_results_initial_sync_workers.results
+      +
+      matrix_synapse_workers_list_results_sync_workers.results
+      +
+      matrix_synapse_workers_list_results_presence_workers.results
+      +
+      matrix_synapse_workers_list_results_client_workers.results
+      +
+      matrix_synapse_workers_list_results_accounts_workers.results
+      +
+      matrix_synapse_workers_list_results_background_jobs_workers.results
+      +
+      matrix_synapse_workers_list_results_event_persister_workers.results
     }}
 
 - set_fact:
     matrix_synapse_workers_enabled_list: "{{ matrix_synapse_dynamic_workers_list }}"
+    
+- set_fact:
+    generated_run_background_tasks_on: background-worker-0
+
+- debug:
+    msg: "generated_run_background_tasks_on: {{ generated_run_background_tasks_on }}"

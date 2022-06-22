@@ -11,6 +11,12 @@ echo "Checking .env file..."
 echo "Loading env vars from .env file..."
 export $(cat .env | xargs)
 
+if [ ! -z "${SUBDOMAIN}" ]; then
+  export DOMAIN=${SUBDOMAIN}.${MATRIX_DOMAIN}
+else
+  export DOMAIN=${MATRIX_DOMAIN}
+fi
+
 # Check prometheus posgres env vars are present
 if [ $USE_PROMETHEUS_POSTGRES_EXPORTER = true ]; then
   [ ! -v "${PROMETHEUS_EXPORTER_POSTGRES_USER}" ] || [ ! -z "${PROMETHEUS_EXPORTER_POSTGRES_USER}" ] || (echo 'PROMETHEUS_EXPORTER_POSTGRES_USER is not defined or empty and is required to setup prometheus exporter for DB' && exit 1)
@@ -41,7 +47,7 @@ echo "Creating inventory hosts file..."
 j2 --format=env templates/hosts.j2 .env >inventory/hosts
 
 # Create inventory host vars.yml
-OUTPUT_FOLDER=inventory/host_vars/$SUBDOMAIN.$MATRIX_DOMAIN/
+OUTPUT_FOLDER=inventory/host_vars/$DOMAIN/
 mkdir -p $OUTPUT_FOLDER
 echo "Generated vars.yaml moved to: $OUTPUT_FOLDER"
 j2 --format=env templates/vars.yml.j2 .env >$OUTPUT_FOLDER/vars.yml
