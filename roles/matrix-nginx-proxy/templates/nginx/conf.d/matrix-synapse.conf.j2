@@ -290,7 +290,7 @@ server {
 			{% if worker.metrics_port != 0 %}
 				location /_synapse-worker-{{ worker.sub_type }}-{{ worker.instanceId }}/metrics {
 					resolver 127.0.0.11 valid=5s;
-					set $backend "matrix-synapse-worker-{{ worker.sub-type }}-{{ worker.instanceId }}:{{ worker.metrics_port }}";
+					set $backend "matrix-synapse-worker-{{ worker.sub_type }}-{{ worker.instanceId }}:{{ worker.metrics_port }}";
 					proxy_pass http://$backend/_synapse/metrics;
 					proxy_set_header Host $host;
 
