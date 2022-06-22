@@ -34,10 +34,7 @@
 
 	{% if initial_sync_workers %}
 	upstream initial_sync_worker_upstream {
-		{% if use_worker_affinity %}
-			hash $http_authorization;
-		{% endif %}
-
+		least_conn;
 		{% for worker in initial_sync_workers %}
 			{% if matrix_nginx_proxy_enabled %}
 				server "matrix-synapse-worker-{{ worker.sub_type }}-{{ worker.instanceId }}:{{ worker.port }}";
