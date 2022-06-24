@@ -1,11 +1,3 @@
-{%- set workers_initial_sync_count = WORKERS_INITIAL_SYNC_COUNT|default('2') %}
-{%- set workers_sync_count = WORKERS_SYNC_COUNT|default('3') %}
-{%- set workers_event_persister_count = WORKERS_EVENT_PERSISTER_COUNT|default('5') %}
-{%- set workers_client_count = WORKERS_CLIENT_COUNT|default('5') %}
-{%- set workers_background_jobs_count = WORKERS_BACKGROUND_JOBS_COUNT|default('1') %}
-{%- set workers_presence_count = WORKERS_PRESENCE_COUNT|default('1') %}
-{%- set workers_account_count = WORKERS_ACCOUNT_COUNT|default('0') %}
-
 {# Include endpoints for each worker type #}
 matrix_synapse_workers_initial_sync_count: {{ workers_initial_sync_count }}
 matrix_synapse_workers_initial_sync_port_range_start: 18121
