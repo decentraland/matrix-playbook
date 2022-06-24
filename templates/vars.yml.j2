@@ -1,5 +1,14 @@
 ---
+{% block vars scoped %}
+    {%- set workers_initial_sync_count = WORKERS_INITIAL_SYNC_COUNT|default('2') %}
+    {%- set workers_sync_count = WORKERS_SYNC_COUNT|default('3') %}
+    {%- set workers_event_persister_count = WORKERS_EVENT_PERSISTER_COUNT|default('5') %}
+    {%- set workers_client_count = WORKERS_CLIENT_COUNT|default('5') %}
+    {%- set workers_background_jobs_count = WORKERS_BACKGROUND_JOBS_COUNT|default('1') %}
+    {%- set workers_presence_count = WORKERS_PRESENCE_COUNT|default('1') %}
+    {%- set workers_account_count = WORKERS_ACCOUNT_COUNT|default('0') %}
 
-{%- include 'templates/main.yml.j2' %}
-{%- include 'templates/workers/workers.yml.j2' %}
-{%- include 'templates/nginx.yml.j2' %}
+    {%- include 'templates/main.yml.j2' %}
+    {%- include 'templates/workers/workers.yml.j2' %}
+    {%- include 'templates/nginx.yml.j2' %}
+{% endblock %}

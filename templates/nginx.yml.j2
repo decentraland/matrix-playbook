@@ -1,17 +1,29 @@
+
 matrix_nginx_proxy_proxy_synapse_additional_server_configuration_blocks: 
-    - 'location /_synapse/node-exporter/ {
-        resolver 127.0.0.11 valid=5s;
-        proxy_pass http://matrix-prometheus-node-exporter:9100/;
-        auth_basic "protected";
-        auth_basic_user_file /nginx-data/matrix-synapse-metrics-htpasswd;
-    }'
+    - |
+      location /_synapse/node-exporter/ {
+          resolver 127.0.0.11 valid=5s;
+          proxy_pass http://matrix-prometheus-node-exporter:9100/;
+          auth_basic "protected";
+          auth_basic_user_file /nginx-data/matrix-synapse-metrics-htpasswd;
+      }
     # Special case for sync endpoint
-    - 'location ~ ^/_matrix/client/(v2_alpha|r0|v3)/sync$ {
-        proxy_set_header Host $host;
-        if ($arg_since) {
-            proxy_pass http://sync_worker_upstream$request_uri;
-        }
-        if ($arg_since = "") {
-            proxy_pass http://initial_sync_worker_upstream$request_uri;
-        }
-    }'
+    - |
+      location ~ ^/_matrix/client/(v2_alpha|r0|v3)/sync$ {
+          proxy_set_header Host $host;
+          if ($arg_since) {
+              proxy_pass http://sync_worker_upstream$request_uri;
+          }
+          if ($arg_since = "") {
+              proxy_pass http://initial_sync_worker_upstream$request_uri;
+          }
+      }
+    {% if workers_client_count|int > 0 %}
+    # Special case for /messages 
+    - |
+      location ~ ^/_matrix/client/(api/v1|r0|v3|unstable)/rooms/(?<roomId>.*)/messages$ {
+          proxy_set_header Host $host;
+          proxy_set_header RoomID $roomId;
+          proxy_pass http://messages_worker_upstream$request_uri;
+      }
+    {% endif %}
