@@ -1,6 +1,6 @@
 ---
 {% block vars scoped %}
-    {%- set workers_initial_sync_count = WORKERS_INITIAL_SYNC_COUNT|default('2') %}
+    {%- set workers_initial_sync_count = WORKERS_INITIAL_SYNC_COUNT|default('3') %}
     {%- set workers_sync_count = WORKERS_SYNC_COUNT|default('3') %}
     {%- set workers_event_persister_count = WORKERS_EVENT_PERSISTER_COUNT|default('5') %}
     {%- set workers_client_count = WORKERS_CLIENT_COUNT|default('5') %}
