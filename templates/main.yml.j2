@@ -23,6 +23,8 @@ matrix_domain: '{{ MATRIX_DOMAIN }}'
 
 matrix_server_fqn_matrix: '{{ SUBDOMAIN|default('synapse', true) }}.{{ MATRIX_DOMAIN }}'
 
+matrix_architecture: '{{ ARCHITECTURE|default('amd64') }}'
+
 # The Matrix homeserver software to install.
 # See `roles/matrix-base/defaults/main.yml` for valid options.
 matrix_homeserver_implementation: synapse
