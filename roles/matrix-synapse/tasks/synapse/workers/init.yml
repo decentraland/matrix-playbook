@@ -12,6 +12,7 @@
       instanceId: "{{ matrix_synapse_workers_generic_workers_port_range_start + item }}"
       port: "{{ matrix_synapse_workers_generic_workers_port_range_start + item }}"
       metrics_port: "{{ matrix_synapse_workers_generic_workers_metrics_range_start + item }}"
+      replication_port: "{{ matrix_synapse_workers_generic_workers_replication_port_range_start + item }}"
   register: "matrix_synapse_workers_list_results_generic_workers"
   loop: "{{ range(0, matrix_synapse_workers_generic_workers_count|int)|list }}"
 
@@ -23,6 +24,7 @@
       instanceId: "{{ item }}"
       port: 0
       metrics_port: "{{ matrix_synapse_workers_federation_sender_workers_metrics_range_start + item }}"
+      replication_port: "{{ matrix_synapse_workers_federation_sender_workers_replication_port_range_start + item }}"
   register: "matrix_synapse_workers_list_results_federation_sender_workers"
   loop: "{{ range(0, matrix_synapse_workers_federation_sender_workers_count|int)|list }}"
 
@@ -35,6 +37,7 @@
       instanceId: "{{ item }}"
       port: 0
       metrics_port: "{{ matrix_synapse_workers_pusher_workers_metrics_range_start + item }}"
+      replication_port: "{{ matrix_synapse_workers_pusher_sender_workers_replication_port_range_start + item }}"
   register: "matrix_synapse_workers_list_results_pusher_workers"
   loop: "{{ range(0, matrix_synapse_workers_pusher_workers_count|int)|list }}"
 
@@ -47,6 +50,7 @@
       instanceId: "{{ item }}"
       port: 0
       metrics_port: "{{ matrix_synapse_workers_appservice_workers_metrics_range_start + item }}"
+      replication_port: "{{ matrix_synapse_workers_appservice_workers_replication_port_range_start + item }}"
   register: "matrix_synapse_workers_list_results_appservice_workers"
   loop: "{{ range(0, matrix_synapse_workers_appservice_workers_count|int)|list }}"
 
@@ -58,6 +62,7 @@
       instanceId: "{{ matrix_synapse_workers_media_repository_workers_port_range_start + item }}"
       port: "{{ matrix_synapse_workers_media_repository_workers_port_range_start + item }}"
       metrics_port: "{{ matrix_synapse_workers_media_repository_workers_metrics_range_start + item }}"
+      replication_port: "{{ matrix_synapse_workers_media_repository_workers_replication_port_range_start + item }}"
   register: "matrix_synapse_workers_list_results_media_repository_workers"
   loop: "{{ range(0, matrix_synapse_workers_media_repository_workers_count|int)|list }}"
 
@@ -68,6 +73,7 @@
       instanceId: "{{ matrix_synapse_workers_frontend_proxy_workers_port_range_start + item }}"
       port: "{{ matrix_synapse_workers_frontend_proxy_workers_port_range_start + item }}"
       metrics_port: "{{ matrix_synapse_workers_frontend_proxy_workers_metrics_range_start + item }}"
+      replication_port: "{{ matrix_synapse_workers_frontend_proxy_workers_replication_port_range_start + item }}"
   register: "matrix_synapse_workers_list_results_frontend_proxy_workers"
   loop: "{{ range(0, matrix_synapse_workers_frontend_proxy_workers_count|int)|list }}"
 
@@ -79,6 +85,7 @@
       instanceId: "{{ item }}"
       port: "{{ matrix_synapse_workers_initial_sync_port_range_start + item }}"
       metrics_port: "{{ matrix_synapse_workers_initial_sync_metrics_range_start + item }}"
+      replication_port: "{{ matrix_synapse_workers_initial_sync_replication_port_range_start + item }}"
   register: "matrix_synapse_workers_list_results_initial_sync_workers"
   loop: "{{ range(0, matrix_synapse_workers_initial_sync_count|int)|list }}"
 
@@ -90,6 +97,7 @@
       instanceId: "{{ item }}"
       port: "{{ matrix_synapse_workers_sync_port_range_start + item }}"
       metrics_port: "{{ matrix_synapse_workers_sync_metrics_range_start + item }}"
+      replication_port: "{{ matrix_synapse_workers_sync_replication_port_range_start + item }}"
   register: "matrix_synapse_workers_list_results_sync_workers"
   loop: "{{ range(0, matrix_synapse_workers_sync_count|int)|list }}"
 
@@ -101,6 +109,7 @@
       instanceId: "{{ item }}"
       port: "{{ matrix_synapse_workers_presence_port_range_start + item }}"
       metrics_port: "{{ matrix_synapse_workers_presence_metrics_range_start + item }}"
+      replication_port: "{{ matrix_synapse_workers_presence_replication_port_range_start + item }}"
   register: "matrix_synapse_workers_list_results_presence_workers"
   loop: "{{ range(0, matrix_synapse_workers_presence_count|int)|list }}"
 
@@ -112,6 +121,7 @@
       instanceId: "{{ item }}"
       port: "{{ matrix_synapse_workers_client_port_range_start + item }}"
       metrics_port: "{{ matrix_synapse_workers_client_metrics_range_start + item }}"
+      replication_port: "{{ matrix_synapse_workers_client_replication_port_range_start + item }}"
   register: "matrix_synapse_workers_list_results_client_workers"
   loop: "{{ range(0, matrix_synapse_workers_client_count|int)|list }}"
 
@@ -121,8 +131,9 @@
       type: 'generic_worker'
       sub_type: 'account-data'
       instanceId: "{{ item }}"
-      port: "{{ matrix_synapse_workers_generic_worker_workers_port_range_start + item }}"
-      metrics_port: "{{ matrix_synapse_workers_generic_worker_workers_metrics_range_start + item }}"
+      port: "{{ matrix_synapse_workers_generic_account_data_port_range_start + item }}"
+      metrics_port: "{{ matrix_synapse_workers_account_data_metrics_range_start + item }}"
+      replication_port: "{{ matrix_synapse_workers_account_data_replication_port_range_start + item }}"
   register: "matrix_synapse_workers_list_results_accounts_workers"
   loop: "{{ range(0, matrix_synapse_workers_accounts_count|int)|list }}"
 
@@ -134,6 +145,7 @@
       instanceId: "{{ item }}"
       port: "{{ matrix_synapse_workers_background_jobs_port_range_start + item }}"
       metrics_port: "{{ matrix_synapse_workers_background_jobs_metrics_range_start + item }}"
+      replication_port: "{{ matrix_synapse_workers_background_jobs_replication_port_range_start + item }}"
   register: "matrix_synapse_workers_list_results_background_jobs_workers"
   loop: "{{ range(0, matrix_synapse_workers_background_jobs_count|int)|list }}"
 
@@ -145,6 +157,7 @@
       instanceId: "{{ item }}"
       port: "{{ matrix_synapse_workers_event_persister_port_range_start + item }}"
       metrics_port: "{{ matrix_synapse_workers_event_persister_metrics_range_start + item }}"
+      replication_port: "{{ matrix_synapse_workers_event_persister_replication_port_range_start + item }}"
   register: "matrix_synapse_workers_list_results_event_persister_workers"
   loop: "{{ range(0, matrix_synapse_workers_event_persister_count|int)|list }}"
 
