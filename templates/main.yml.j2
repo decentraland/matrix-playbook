@@ -206,3 +206,7 @@ matrix_synapse_federation_enabled: {{ federation_enabled }}
 matrix_synapse_container_extra_arguments: ['-m={{CONTAINER_MEMORY|default('2g')}}']
 
 matrix_ma1sd_enabled: false
+
+# Sets time to store user_ips (default is 28d), we are not persisting device IDs in the client side,
+# so every log in is creating a new one and makes sense to get rid of them faster.
+user_ips_max_age: 7d
