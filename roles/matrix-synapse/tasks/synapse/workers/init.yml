@@ -168,7 +168,7 @@
           {
             item.ansible_facts.worker.sub_type + '-' + item.ansible_facts.worker.instanceId|string: {
               'host': 'matrix-synapse-worker-' + item.ansible_facts.worker.sub_type + '-' + item.ansible_facts.worker.instanceId|string,
-              'port': item.ansible_facts.worker.port
+              'port': item.ansible_facts.worker.replication_port
             }
           }
         )}}"
