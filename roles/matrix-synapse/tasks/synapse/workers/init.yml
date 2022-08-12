@@ -93,16 +93,16 @@
   register: "matrix_synapse_workers_list_results_sync_workers"
   loop: "{{ range(0, matrix_synapse_workers_sync_count|int)|list }}"
 
-- name: Build presence worker
+- name: Build streams writer worker
   set_fact:
     worker:
       type: 'generic_worker'
-      sub_type: 'presence'
+      sub_type: 'streams-writer'
       instanceId: "{{ item }}"
-      port: "{{ matrix_synapse_workers_presence_port_range_start + item }}"
-      metrics_port: "{{ matrix_synapse_workers_presence_metrics_range_start + item }}"
-  register: "matrix_synapse_workers_list_results_presence_workers"
-  loop: "{{ range(0, matrix_synapse_workers_presence_count|int)|list }}"
+      port: "{{ matrix_synapse_workers_streams_writer_port_range_start + item }}"
+      metrics_port: "{{ matrix_synapse_workers_streams_writer_metrics_range_start + item }}"
+  register: "matrix_synapse_workers_list_results_streams_writer_workers"
+  loop: "{{ range(0, matrix_synapse_workers_streams_writer_count|int)|list }}"
 
 - name: Build client worker
   set_fact:
@@ -161,7 +161,7 @@
         )}}"
   with_items: |
     {{
-      matrix_synapse_workers_list_results_presence_workers.results
+      matrix_synapse_workers_list_results_streams_writer_workers.results
       +
       matrix_synapse_workers_list_results_accounts_workers.results
       +
@@ -174,8 +174,8 @@
     msg: "generated_instance_map: {{ generated_instance_map }}"
 
 - set_fact:
-    presence_workers: "{{ presence_workers | default([]) + [item.ansible_facts.worker.sub_type + '-' + item.ansible_facts.worker.instanceId|string] }}"
-  with_items: "{{ matrix_synapse_workers_list_results_presence_workers.results }}"
+    streams_writer_workers: "{{ streams_writer_workers | default([]) + [item.ansible_facts.worker.sub_type + '-' + item.ansible_facts.worker.instanceId|string] }}"
+  with_items: "{{ matrix_synapse_workers_list_results_streams_writer_workers.results }}"
 
 - set_fact:
     event_persister_workers: "{{ event_persister_workers | default([]) + [item.ansible_facts.worker.sub_type + '-' + item.ansible_facts.worker.instanceId|string] }}"
@@ -184,7 +184,8 @@
 - name: Build stream_writer
   set_fact:
     generated_stream_writers:
-      presence: "{{ presence_workers[0] }}"
+      presence: "{{ streams_writer_workers[0] }}"
+      receipts: "{{ streams_writer_workers[0] }}"
       events: "{{ event_persister_workers }}"
 
 - debug:
@@ -210,7 +211,7 @@
       +
       matrix_synapse_workers_list_results_sync_workers.results
       +
-      matrix_synapse_workers_list_results_presence_workers.results
+      matrix_synapse_workers_list_results_streams_writer_workers.results
       +
       matrix_synapse_workers_list_results_client_workers.results
       +

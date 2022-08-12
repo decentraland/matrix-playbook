@@ -3,7 +3,7 @@
 {% set generic_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|selectattr('sub_type', 'equalto', 'complete')|list %}
 {% set initial_sync_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|selectattr('sub_type', 'equalto', 'initial-sync')|list %}
 {% set sync_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|selectattr('sub_type', 'equalto', 'sync')|list %}
-{% set presence_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|selectattr('sub_type', 'equalto', 'presence')|list %}
+{% set streams_writer_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|selectattr('sub_type', 'equalto', 'streams-writer')|list %}
 {% set client_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|selectattr('sub_type', 'equalto', 'client')|list %}
 {% set account_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|selectattr('sub_type', 'equalto', 'account-data')|list %}
 
@@ -60,9 +60,9 @@
 	}
 	{% endif %}
 
-	{% if presence_workers %}
-	upstream presence_worker_upstream {
-		{% for worker in presence_workers %}
+	{% if streams_writer_workers %}
+	upstream streams_writer_worker_upstream {
+		{% for worker in streams_writer_workers %}
 			{% if matrix_nginx_proxy_enabled %}
 			server "matrix-synapse-worker-{{ worker.sub_type }}-{{ worker.instanceId }}:{{ worker.port }}";
 			{% else %}
@@ -195,10 +195,10 @@ server {
 	{% endfor %}
 {% endif %}
 
-{% if presence_workers %}
-	{% for location in matrix_synapse_presence_worker_locations %}
+{% if streams_writer_workers %}
+	{% for location in matrix_synapse_streams_writer_worker_locations %}
 	location ~ {{ location }} {
-		proxy_pass http://presence_worker_upstream$request_uri;
+		proxy_pass http://streams_writer_worker_upstream$request_uri;
 		proxy_set_header Host $host;
 	}
 	{% endfor %}
