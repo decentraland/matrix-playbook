@@ -9,7 +9,7 @@ worker_replication_http_port: {{ matrix_synapse_replication_http_port }}
 
 {% set has_listeners = (matrix_synapse_worker_details.type not in [ 'appservice', 'federation_sender', 'pusher' ] or matrix_synapse_metrics_enabled) %}
 {% set add_client = (matrix_synapse_worker_details.type in ['generic_worker', 'frontend_proxy', 'user_dir'] and matrix_synapse_worker_details.sub_type not in [ 'background-jobs', 'event-persister' ]) %}
-{% set add_replication = (matrix_synapse_worker_details.type in ['generic_worker' ] and matrix_synapse_worker_details.sub_type in [ 'presence', 'event-persister' ]) %}
+{% set add_replication = (matrix_synapse_worker_details.type in ['generic_worker' ] and matrix_synapse_worker_details.sub_type in [ 'streams-writer', 'event-persister' ]) %}
 
 {% set http_resources = [] %}
 {% if add_client %}
