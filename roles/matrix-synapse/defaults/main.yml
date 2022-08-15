@@ -366,37 +366,44 @@ matrix_synapse_workers_presets:
 matrix_synapse_workers_container_host_bind_address: ''
 
 matrix_synapse_workers_generic_workers_count: "{{ matrix_synapse_workers_presets[matrix_synapse_workers_preset]['generic_workers_count'] }}"
-matrix_synapse_workers_generic_workers_port_range_start: 18111
-matrix_synapse_workers_generic_workers_metrics_range_start: 19111
+matrix_synapse_workers_generic_workers_port_range_start: 18000
+matrix_synapse_workers_generic_workers_metrics_range_start: 18200
+matrix_synapse_workers_generic_workers_replication_port_range_start: 18300
 
 # matrix_synapse_workers_pusher_workers_count can only be 0 or 1 for now.
 # More instances are not supported due to a playbook limitation having to do with keeping `pusher_instances` in `homeserver.yaml` updated.
 # See https://github.com/matrix-org/synapse/commit/ddfdf945064925eba761ae3748e38f3a1c73c328
 matrix_synapse_workers_pusher_workers_count: "{{ matrix_synapse_workers_presets[matrix_synapse_workers_preset]['pusher_workers_count'] }}"
-matrix_synapse_workers_pusher_workers_metrics_range_start: 19200
+matrix_synapse_workers_pusher_workers_metrics_range_start: 18400
+matrix_synapse_workers_pusher_workers_replication_port_range_start: 18500
 
 # matrix_synapse_workers_appservice_workers_count can only be 0 or 1. More instances are not supported.
 matrix_synapse_workers_appservice_workers_count: "{{ matrix_synapse_workers_presets[matrix_synapse_workers_preset]['appservice_workers_count'] }}"
-matrix_synapse_workers_appservice_workers_metrics_range_start: 19300
+matrix_synapse_workers_appservice_workers_metrics_range_start: 18600
+matrix_synapse_workers_appservice_workers_replication_port_range_start: 18700
 
 # matrix_synapse_workers_federation_sender_workers_count can only be 0 or 1 for now.
 # More instances are not supported due to a playbook limitation having to do with keeping `federation_sender_instances` in `homeserver.yaml` updated.
 # See https://github.com/matrix-org/synapse/blob/master/docs/workers.md#synapseappfederation_sender
 matrix_synapse_workers_federation_sender_workers_count: "{{ matrix_synapse_workers_presets[matrix_synapse_workers_preset]['federation_sender_workers_count'] }}"
-matrix_synapse_workers_federation_sender_workers_metrics_range_start: 19400
+matrix_synapse_workers_federation_sender_workers_metrics_range_start: 18800
+matrix_synapse_workers_federation_sender_workers_replication_port_range_start: 18850
 
 matrix_synapse_workers_media_repository_workers_count: "{{ matrix_synapse_workers_presets[matrix_synapse_workers_preset]['media_repository_workers_count'] }}"
-matrix_synapse_workers_media_repository_workers_port_range_start: 18551
-matrix_synapse_workers_media_repository_workers_metrics_range_start: 19551
+matrix_synapse_workers_media_repository_workers_port_range_start: 18900
+matrix_synapse_workers_media_repository_workers_metrics_range_start: 19000
+matrix_synapse_workers_media_repository_workers_replication_port_range_start: 19100
 
 # Disabled until https://github.com/matrix-org/synapse/issues/8787 is resolved.
 matrix_synapse_workers_user_dir_workers_count: "{{ matrix_synapse_workers_presets[matrix_synapse_workers_preset]['user_dir_workers_count'] }}"
-matrix_synapse_workers_user_dir_workers_port_range_start: 18661
-matrix_synapse_workers_user_dir_workers_metrics_range_start: 19661
+matrix_synapse_workers_user_dir_workers_port_range_start: 19200
+matrix_synapse_workers_user_dir_workers_metrics_range_start: 19300
+matrix_synapse_workers_user_dir_workers_replication_port_range_start: 19400
 
 matrix_synapse_workers_frontend_proxy_workers_count: "{{ matrix_synapse_workers_presets[matrix_synapse_workers_preset]['frontend_proxy_workers_count'] }}"
-matrix_synapse_workers_frontend_proxy_workers_port_range_start: 18771
-matrix_synapse_workers_frontend_proxy_workers_metrics_range_start: 19771
+matrix_synapse_workers_frontend_proxy_workers_port_range_start: 19500
+matrix_synapse_workers_frontend_proxy_workers_metrics_range_start: 19600
+matrix_synapse_workers_frontend_proxy_workers_replication_port_range_start: 19700
 
 # Default list of workers to spawn.
 #
