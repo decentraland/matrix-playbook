@@ -3,7 +3,7 @@
 {% set generic_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|selectattr('sub_type', 'equalto', 'complete')|list %}
 {% set initial_sync_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|selectattr('sub_type', 'equalto', 'initial-sync')|list %}
 {% set sync_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|selectattr('sub_type', 'equalto', 'sync')|list %}
-{% set streams_writer_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|selectattr('sub_type', 'equalto', 'stream-writer')|list %}
+{% set streams_writer_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|selectattr('sub_type', 'equalto', 'streams-writer')|list %}
 {% set client_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|selectattr('sub_type', 'equalto', 'client')|list %}
 {% set account_workers = matrix_nginx_proxy_synapse_workers_list|selectattr('type', 'equalto', 'generic_worker')|selectattr('sub_type', 'equalto', 'account-data')|list %}
 
@@ -206,8 +206,8 @@ server {
 	location ~ {{ location }} {
 		proxy_pass http://streams_writer_worker_upstream$request_uri;
 		proxy_set_header X-Forwarded-For $remote_addr;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Host $host;
 	}
 	{% endfor %}
 {% endif %}

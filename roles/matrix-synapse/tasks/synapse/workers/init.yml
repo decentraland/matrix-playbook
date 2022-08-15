@@ -101,11 +101,11 @@
   register: "matrix_synapse_workers_list_results_sync_workers"
   loop: "{{ range(0, matrix_synapse_workers_sync_count|int)|list }}"
 
-- name: Build streams_writer worker
+- name: Build streams writer worker
   set_fact:
     worker:
-      type: "generic_worker"
-      sub_type: "streams-writer"
+      type: 'generic_worker'
+      sub_type: 'streams-writer'
       instanceId: "{{ item }}"
       port: "{{ matrix_synapse_workers_streams_writer_port_range_start + item }}"
       metrics_port: "{{ matrix_synapse_workers_streams_writer_metrics_range_start + item }}"
