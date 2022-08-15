@@ -10,8 +10,10 @@ matrix_synapse_initial_sync_worker_locations:
 matrix_synapse_sync_worker_locations:
   - ^/_matrix/client/(api/v1|v2_alpha|r0|v3)/events$
 
-matrix_synapse_presence_worker_locations:
+matrix_synapse_streams_writer_worker_locations:
   - ^/_matrix/client/(api/v1|r0|v3|unstable)/presence/
+  - ^/_matrix/client/(r0|v3|unstable)/rooms/.*/receipt
+  - ^/_matrix/client/(r0|v3|unstable)/rooms/.*/read_markers
 
 matrix_synapse_client_worker_locations:
   - ^/_matrix/client/(api/v1|r0|v3|unstable)/createRoom$
@@ -42,8 +44,6 @@ matrix_synapse_client_worker_locations:
   - ^/_matrix/client/(api/v1|r0|v3|unstable)/join/
   - ^/_matrix/client/(api/v1|r0|v3|unstable)/profile/
   - ^/_matrix/client/(r0|v3|unstable)/sendToDevice/
-  - ^/_matrix/client/(r0|v3|unstable)/rooms/.*/receipt
-  - ^/_matrix/client/(r0|v3|unstable)/rooms/.*/read_markers
   {%- if workers_account_count|int == 0 %}
   - ^/_matrix/client/(r0|v3|unstable)/.*/tags
   - ^/_matrix/client/(r0|v3|unstable)/.*/account_data
