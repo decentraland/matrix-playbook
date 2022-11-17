@@ -75,6 +75,7 @@ matrix_synapse_presence_enabled: {{ use_presence }}
 
 {% if enable_open_registration %}
 matrix_synapse_enable_registration: true
+matrix_synapse_enable_registration_without_verification: true
 {% endif %}
 {%- if ENV not in ['prd'] %}
 # Config to support Romeo and Juliet benchmark and testing tools (429 - too many requests):
@@ -210,3 +211,6 @@ matrix_ma1sd_enabled: false
 # Sets time to store user_ips (default is 28d), we are not persisting device IDs in the client side,
 # so every log in is creating a new one and makes sense to get rid of them faster.
 matrix_synapse_user_ips_max_age: 7d
+
+matrix_synapse_version: v1.71.0
+
