@@ -1234,6 +1234,12 @@ turn_allow_guests: {{ matrix_synapse_turn_allow_guests|to_json }}
 #
 enable_registration: {{ matrix_synapse_enable_registration|to_json }}
 
+# Enable registration without email or captcha verification. Note: this option is *not* recommended,
+# as registration without verification is a known vector for spam and abuse. Defaults to false. Has no effect
+# unless `enable_registration` is also enabled.
+#
+enable_registration_without_verification: {{ matrix_synapse_enable_registration_without_verification|to_json }}
+
 # Time that a user's session remains valid for, after they log in.
 #
 # Note that this is not currently compatible with guest logins.
@@ -1375,7 +1381,6 @@ allow_guest_access: {{ matrix_synapse_allow_guest_access|to_json }}
 # https://matrix.org/docs/spec/identity_service/latest
 #
 account_threepid_delegates:
-    email: {{ matrix_synapse_account_threepid_delegates_email|to_json }}
     msisdn: {{ matrix_synapse_account_threepid_delegates_msisdn|to_json }}
 
 # Whether users are allowed to change their displayname after it has
