@@ -76,6 +76,8 @@ matrix_synapse_presence_enabled: {{ use_presence }}
 {% if enable_open_registration %}
 matrix_synapse_enable_registration: true
 matrix_synapse_enable_registration_without_verification: true
+{%- else %}
+matrix_synapse_enable_registration_without_verification: false 
 {% endif %}
 {%- if ENV not in ['prd'] %}
 # Config to support Romeo and Juliet benchmark and testing tools (429 - too many requests):
